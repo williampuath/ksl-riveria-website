@@ -1,0 +1,2249 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Riveria Garden @ Wawari - Iskandar Puteri</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    html, body {
+      height: 100%;
+      width: 100%;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      overflow-x: hidden;
+    }
+    
+    .app-wrapper {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .gradient-hero {
+      background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #0ea5e9 100%);
+    }
+    
+    .property-card {
+      transition: all 0.3s ease;
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    
+    .property-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+    
+    .property-icon {
+      width: 64px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      margin-bottom: 16px;
+    }
+    
+    .feature-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    
+    .feature-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 4px;
+    }
+    
+    .cta-button {
+      transition: all 0.3s ease;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      padding: 14px 32px;
+      font-size: 16px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .cta-button:hover {
+      transform: scale(1.05);
+    }
+    
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .animate-fade-in {
+      animation: fadeInUp 0.6s ease forwards;
+    }
+
+    .slideshow-nav-btn {
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .slideshow-nav-btn:active {
+      transform: scale(0.95);
+    }
+
+    #hero-image {
+      transition: opacity 0.5s ease, filter 0.5s ease;
+      opacity: 1;
+      filter: blur(0px) brightness(1);
+    }
+  </style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <style>body { box-sizing: border-box; }
+  
+  .photo-mgmt-panel {
+    position: fixed;
+    bottom-20px;
+    right-20px;
+    z-index-40;
+    background-white;
+    border-radius-8px;
+    box-shadow-0 4px 12px rgba(0, 0, 0, 0.15);
+    width-300px;
+  }
+  
+  .photo-upload-input {
+    display-none;
+  }
+  </style>
+ </head>
+ <body>
+  <div class="app-wrapper bg-gray-50">
+   <!-- Header -->
+   <header class="gradient-hero text-white sticky top-0 z-50 shadow-lg">
+    <div class="max-w-6xl mx-auto px-6 py-6 flex items-center justify-between">
+     <div>
+      <h1 id="header-project" class="text-3xl font-bold">Riveria Garden @ Wawari</h1>
+      <p id="header-developer" class="text-blue-100 text-sm mt-1">KSL Project | Marketing Agent</p>
+     </div><!-- Location Image Modal -->
+     <div id="location-image-modal" style="display: none;" class="fixed inset-0 z-50 bg-black bg-opacity-75 flex items-center justify-center p-4 overflow-auto">
+      <div class="bg-white rounded-lg max-w-4xl w-full shadow-2xl" style="max-height: 90vh;">
+       <div class="sticky top-0 bg-white border-b border-gray-200 flex items-center justify-between p-4">
+        <h2 class="text-2xl font-bold text-gray-900">Location Map</h2>
+        <div class="flex items-center gap-4">
+         <button id="location-zoom-in-btn" class="text-gray-600 hover:text-gray-900 transition" title="Zoom In"> <i data-lucide="zoom-in" style="width: 24px; height: 24px;"></i> </button> <button id="location-zoom-out-btn" class="text-gray-600 hover:text-gray-900 transition" title="Zoom Out"> <i data-lucide="zoom-out" style="width: 24px; height: 24px;"></i> </button> <button id="close-location-image-modal" class="text-gray-500 hover:text-gray-700 transition"> <i data-lucide="x" style="width: 28px; height: 28px;"></i> </button>
+        </div>
+       </div>
+       <div class="p-6 overflow-auto" style="max-height: calc(90vh - 70px);">
+        <div id="location-image-container" class="flex items-center justify-center" style="min-height: 400px;">
+         <img id="location-image-enlarged" src="" alt="Location Map" class="rounded-lg object-contain" style="max-width: 100%; cursor: grab; user-select: none;">
+        </div>
+       </div>
+      </div>
+     </div><!-- Google Maps Modal -->
+     <div id="maps-modal" style="display: none;" class="fixed inset-0 z-50 bg-black bg-opacity-75 flex items-center justify-center p-4">
+      <div class="bg-white rounded-lg max-w-4xl w-full shadow-2xl" style="max-height: 90vh;">
+       <div class="sticky top-0 bg-white border-b border-gray-200 flex items-center justify-between p-4">
+        <h2 class="text-2xl font-bold text-gray-900">📍 Location on Google Maps</h2><button id="close-maps-modal" class="text-gray-500 hover:text-gray-700 transition"> <i data-lucide="x" style="width: 28px; height: 28px;"></i> </button>
+       </div>
+       <div class="p-4 overflow-auto" style="max-height: calc(90vh - 70px);">
+        <div class="relative w-full bg-gray-100" style="padding-bottom: 66.66%; height: 0; overflow: hidden; border-radius: 8px;"><iframe id="maps-iframe" class="absolute top-0 left-0 w-full h-full rounded-lg" src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d19563.73364066035!2d103.7383!3d1.5847!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e1!3m2!1sen!2smy!4v1234567890" style="border:0;" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+        <p class="text-gray-600 text-sm mt-4"><a href="https://maps.app.goo.gl/LPeFKCVwyXnVKERG7" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 font-semibold">View on Google Maps →</a></p>
+       </div>
+      </div>
+     </div>
+     <div id="header-contact" class="text-right text-sm text-blue-100">
+      Contact us
+     </div>
+    </div>
+   </header><!-- Masterplan Image 2 Modal -->
+   <div id="masterplan-image-modal" style="display: none;" class="fixed inset-0 z-50 bg-black bg-opacity-75 flex items-center justify-center p-4 overflow-auto">
+    <div class="bg-white rounded-lg max-w-4xl w-full shadow-2xl" style="max-height: 90vh;">
+     <div class="sticky top-0 bg-white border-b border-gray-200 flex items-center justify-between p-4">
+      <h2 class="text-2xl font-bold text-gray-900">Masterplan</h2>
+      <div class="flex items-center gap-4">
+       <button id="masterplan-zoom-in-btn" class="text-gray-600 hover:text-gray-900 transition" title="Zoom In"> <i data-lucide="zoom-in" style="width: 24px; height: 24px;"></i> </button> <button id="masterplan-zoom-out-btn" class="text-gray-600 hover:text-gray-900 transition" title="Zoom Out"> <i data-lucide="zoom-out" style="width: 24px; height: 24px;"></i> </button> <button id="close-masterplan-image-modal" class="text-gray-500 hover:text-gray-700 transition"> <i data-lucide="x" style="width: 28px; height: 28px;"></i> </button>
+      </div>
+     </div>
+     <div class="p-6 overflow-auto" style="max-height: calc(90vh - 70px);">
+      <div id="masterplan-image-container" class="flex items-center justify-center" style="min-height: 400px;">
+       <img id="masterplan-image-enlarged" src="" alt="Masterplan" class="rounded-lg object-contain" style="max-width: 100%; cursor: grab; user-select: none;">
+      </div>
+     </div>
+    </div>
+   </div><!-- Hero Section with Slideshow -->
+   <section class="text-white py-12 px-6">
+    <div class="max-w-6xl mx-auto">
+     <!-- Slideshow Gallery -->
+     <div class="relative mb-8 rounded-16 overflow-hidden shadow-2xl">
+      <!-- Main Image Display -->
+      <div class="relative w-full bg-gradient-to-br from-blue-600 to-blue-800" style="padding-bottom: 56.25%; background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);">
+       <img id="hero-image" src="" alt="Hero Photo" class="absolute inset-0 w-full h-full object-cover" loading="lazy" onerror="console.error('Image failed to load:', this.src); this.style.display='none';">
+       <div id="image-error-message" class="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-blue-600 to-blue-800 text-white">
+        <div style="text-align: center;">
+         <p style="font-size: 48px; margin-bottom: 12px;">📸</p>
+         <p class="text-lg font-semibold mb-2">Project Image Gallery</p>
+         <p class="text-sm text-blue-100">4 images loaded</p>
+        </div>
+       </div>
+      </div><!-- Navigation Buttons -->
+      <div class="absolute inset-0 flex items-center justify-between px-4 pointer-events-none">
+       <button id="prev-btn" class="slideshow-nav-btn pointer-events-auto bg-white rounded-full p-3 transition shadow-lg" style="background-color: rgba(255, 255, 255, 0.25);"> <i data-lucide="chevron-left" style="width: 24px; height: 24px; color: black;"></i> </button> <button id="next-btn" class="slideshow-nav-btn pointer-events-auto bg-white rounded-full p-3 transition shadow-lg" style="background-color: rgba(255, 255, 255, 0.25);"> <i data-lucide="chevron-right" style="width: 24px; height: 24px; color: black;"></i> </button>
+      </div><!-- Slide Counter -->
+      <div class="absolute bottom-4 right-4 bg-black bg-opacity-60 text-white px-4 py-2 rounded-full text-sm font-semibold">
+       <span id="slide-counter">1</span> / <span id="slide-total">4</span>
+      </div>
+     </div><!-- Hero Text -->
+     <div class="text-center animate-fade-in bg-gradient-to-r from-blue-600 to-cyan-600 rounded-16 p-8 text-white">
+      <h2 id="tagline" class="text-4xl md:text-5xl font-bold mb-4">Your Dream Lifestyle Awaits</h2>
+      <p id="location-details" class="text-xl text-blue-100 mb-2">Wawari, Iskandar Puteri, Johor</p>
+      <p class="text-xl text-blue-100 mb-8">Discover premium residential and commercial spaces</p>
+      <div class="flex flex-col md:flex-row gap-4 justify-center"><a id="whatsapp-hero" href="https://api.whatsapp.com/send?phone=60177288652&amp;text=Hi%2C%20I%27m%20interested%20in%20KSL%20Riveria%20Garden.%20Can%20you%20share%20some%20info%20to%20me%3F%0AThanks" target="_blank" rel="noopener noreferrer" class="cta-button bg-white text-blue-600 hover:bg-blue-50"> <i data-lucide="message-circle" style="width: 20px; height: 20px;"></i> Message on WhatsApp </a> <a id="vr-link" href="https://360media.com.my/KSL/riveriagarden/" target="_blank" rel="noopener noreferrer" class="cta-button bg-yellow-400 text-blue-900 hover:bg-yellow-300"> <i data-lucide="eye" style="width: 20px; height: 20px;"></i> Virtual Tour </a>
+      </div>
+     </div>
+    </div>
+   </section><!-- Main Content -->
+   <main class="flex-1 py-16 px-6">
+    <div class="max-w-6xl mx-auto">
+     <!-- Property Types Section -->
+     <section class="mb-20" id="property-types-section">
+      <div class="text-center mb-12">
+       <h2 class="text-4xl font-bold text-gray-900 mb-3">Our Property Types</h2>
+       <p class="text-xl text-gray-600">Click any property card to view detailed information and inquire</p>
+      </div>
+      <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
+       <!-- Apartment Section -->
+       <div id="apt-card" class="property-card bg-white rounded-lg overflow-hidden shadow-md border border-gray-100 flex flex-col text-left">
+        <div class="w-full bg-gray-200 overflow-hidden flex-shrink-0 relative" style="aspect-ratio: 16/9;">
+         <img id="apt-image" src="https://via.placeholder.com/400x225/1e3a8a/ffffff?text=Apartment" alt="Apartment" class="w-full h-full object-cover" loading="lazy" onerror="console.error('Image failed to load:', this.src); this.style.background='#e5e7eb'; this.alt='Image unavailable';"> <!-- Navigation Arrows -->
+         <div class="absolute inset-0 flex items-center justify-between px-2 pointer-events-none opacity-0 hover:opacity-100 transition-opacity" style="background: rgba(0,0,0,0.2);"><button id="apt-prev-btn" class="slideshow-nav-btn pointer-events-auto bg-white rounded-full p-2 transition shadow-lg" style="background-color: rgba(255, 255, 255, 0.8);"><i data-lucide="chevron-left" style="width: 20px; height: 20px; color: black;"></i></button> <button id="apt-next-btn" class="slideshow-nav-btn pointer-events-auto bg-white rounded-full p-2 transition shadow-lg" style="background-color: rgba(255, 255, 255, 0.8);"><i data-lucide="chevron-right" style="width: 20px; height: 20px; color: black;"></i></button>
+         </div><!-- Image Dot Indicators -->
+         <div class="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-2">
+          <button id="apt-dot-0" class="apt-dot w-2 h-2 rounded-full bg-white cursor-pointer transition hover:bg-gray-200 active-dot" style="opacity: 1;" title="Image 1"></button> <button id="apt-dot-1" class="apt-dot w-2 h-2 rounded-full bg-white cursor-pointer transition hover:bg-gray-200" style="opacity: 0.5;" title="Image 2"></button>
+         </div>
+        </div>
+        <div class="p-4 flex flex-col justify-between flex-1">
+         <div>
+          <div class="property-icon bg-gradient-to-br from-blue-500 to-blue-600" style="width: 48px; height: 48px; margin-bottom: 12px;">
+           <i data-lucide="building-2" style="width: 20px; height: 20px; color: white;"></i>
+          </div>
+          <h3 id="apt-title" class="text-base font-bold text-gray-900 mb-1">Services Apartment</h3>
+          <p id="apt-specs" class="text-xs text-gray-600 mb-3">Studio to 3-bedroom units</p>
+         </div>
+         <p id="apt-price" class="text-sm font-bold text-blue-600">Coming Soon</p>
+        </div>
+       </div><!-- Terrace House Section -->
+       <div id="terrace-card" class="property-card bg-white rounded-lg overflow-hidden shadow-md border border-gray-100 flex flex-col text-left">
+        <div class="w-full bg-gray-200 overflow-hidden flex-shrink-0 relative" style="aspect-ratio: 16/9;">
+         <img id="terrace-image" src="https://via.placeholder.com/400x225/10b981/ffffff?text=Terrace" alt="Terrace House" class="w-full h-full object-cover" loading="lazy" onerror="console.error('Image failed to load:', this.src); this.style.background='#e5e7eb'; this.alt='Image unavailable';"> <!-- Navigation Arrows -->
+         <div class="absolute inset-0 flex items-center justify-between px-2 pointer-events-none opacity-0 hover:opacity-100 transition-opacity" style="background: rgba(0,0,0,0.2);"><button id="terrace-prev-btn" class="slideshow-nav-btn pointer-events-auto bg-white rounded-full p-2 transition shadow-lg" style="background-color: rgba(255, 255, 255, 0.8);"><i data-lucide="chevron-left" style="width: 20px; height: 20px; color: black;"></i></button> <button id="terrace-next-btn" class="slideshow-nav-btn pointer-events-auto bg-white rounded-full p-2 transition shadow-lg" style="background-color: rgba(255, 255, 255, 0.8);"><i data-lucide="chevron-right" style="width: 20px; height: 20px; color: black;"></i></button>
+         </div><!-- Image Dot Indicators -->
+         <div class="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-2">
+          <button id="terrace-dot-0" class="terrace-dot w-2 h-2 rounded-full bg-white cursor-pointer transition hover:bg-gray-200 active-dot" style="opacity: 1;" title="Image 1"></button> <button id="terrace-dot-1" class="terrace-dot w-2 h-2 rounded-full bg-white cursor-pointer transition hover:bg-gray-200" style="opacity: 0.5;" title="Image 2"></button>
+         </div>
+        </div>
+        <div class="p-4 flex flex-col justify-between flex-1">
+         <div>
+          <div class="property-icon bg-gradient-to-br from-emerald-500 to-emerald-600" style="width: 48px; height: 48px; margin-bottom: 12px;">
+           <i data-lucide="home" style="width: 20px; height: 20px; color: white;"></i>
+          </div>
+          <h3 id="terrace-title" class="text-base font-bold text-gray-900 mb-1">Terrace House</h3>
+          <p id="terrace-specs" class="text-xs text-gray-600 mb-3">1,500 - 2,500 sqft</p>
+         </div>
+         <p id="terrace-price" class="text-sm font-bold text-emerald-600">Coming Soon</p>
+        </div>
+       </div><!-- Cluster Home Section -->
+       <div id="cluster-card" class="property-card bg-white rounded-lg overflow-hidden shadow-md border border-gray-100 flex flex-col text-left">
+        <div class="w-full bg-gray-200 overflow-hidden flex-shrink-0 relative" style="aspect-ratio: 16/9;">
+         <img id="cluster-image" src="https://via.placeholder.com/400x225/f59e0b/ffffff?text=Cluster" alt="Cluster Home" class="w-full h-full object-cover" loading="lazy" onerror="console.error('Image failed to load:', this.src); this.style.background='#e5e7eb'; this.alt='Image unavailable';"> <!-- Navigation Arrows -->
+         <div class="absolute inset-0 flex items-center justify-between px-2 pointer-events-none opacity-0 hover:opacity-100 transition-opacity" style="background: rgba(0,0,0,0.2);"><button id="cluster-prev-btn" class="slideshow-nav-btn pointer-events-auto bg-white rounded-full p-2 transition shadow-lg" style="background-color: rgba(255, 255, 255, 0.8);"><i data-lucide="chevron-left" style="width: 20px; height: 20px; color: black;"></i></button> <button id="cluster-next-btn" class="slideshow-nav-btn pointer-events-auto bg-white rounded-full p-2 transition shadow-lg" style="background-color: rgba(255, 255, 255, 0.8);"><i data-lucide="chevron-right" style="width: 20px; height: 20px; color: black;"></i></button>
+         </div><!-- Image Dot Indicators -->
+         <div class="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-2">
+          <button id="cluster-dot-0" class="cluster-dot w-2 h-2 rounded-full bg-white cursor-pointer transition hover:bg-gray-200 active-dot" style="opacity: 1;" title="Image 1"></button> <button id="cluster-dot-1" class="cluster-dot w-2 h-2 rounded-full bg-white cursor-pointer transition hover:bg-gray-200" style="opacity: 0.5;" title="Image 2"></button>
+         </div>
+        </div>
+        <div class="p-4 flex flex-col justify-between flex-1">
+         <div>
+          <div class="property-icon bg-gradient-to-br from-amber-500 to-amber-600" style="width: 48px; height: 48px; margin-bottom: 12px; display: flex; align-items: center; justify-content: center;">
+           <i data-lucide="home" style="width: 24px; height: 24px; color: white;"></i>
+          </div>
+          <h3 id="cluster-title" class="text-base font-bold text-gray-900 mb-1">Cluster Home</h3>
+          <p id="cluster-specs" class="text-xs text-gray-600 mb-3">1,200 - 2,000 sqft</p>
+         </div>
+         <p id="cluster-price" class="text-sm font-bold text-amber-600">Coming Soon</p>
+        </div>
+       </div><!-- Semi-Detached House Section -->
+       <div id="semidetached-card" class="property-card bg-white rounded-lg overflow-hidden shadow-md border border-gray-100 flex flex-col text-left">
+        <div class="w-full bg-gray-200 overflow-hidden flex-shrink-0" style="aspect-ratio: 16/9;">
+         <img id="semidetached-image" src="https://via.placeholder.com/400x225/ec4899/ffffff?text=Semi-Detached" alt="Semi-Detached Home" class="w-full h-full object-cover" loading="lazy" onerror="console.error('Image failed to load:', this.src); this.style.background='#e5e7eb'; this.alt='Image unavailable';">
+        </div>
+        <div class="p-4 flex flex-col justify-between flex-1">
+         <div>
+          <div class="property-icon bg-gradient-to-br from-pink-500 to-pink-600" style="width: 48px; height: 48px; margin-bottom: 12px; display: flex; align-items: center; justify-content: center;">
+           <i data-lucide="home" style="width: 24px; height: 24px; color: white;"></i>
+          </div>
+          <h3 id="semidetached-title" class="text-base font-bold text-gray-900 mb-1">Semi-Detached Home</h3>
+          <p id="semidetached-specs" class="text-xs text-gray-600 mb-3">2,000 - 2,500 sqft</p>
+         </div>
+         <p id="semidetached-price" class="text-sm font-bold text-pink-600">Coming Soon</p>
+        </div>
+       </div><!-- Shop Office Section -->
+       <div id="shopoffice-card" class="property-card bg-white rounded-lg overflow-hidden shadow-md border border-gray-100 flex flex-col text-left">
+        <div class="w-full bg-gray-200 overflow-hidden flex-shrink-0 relative" style="aspect-ratio: 16/9;">
+         <img id="shopoffice-image" src="https://via.placeholder.com/400x225/8b5cf6/ffffff?text=Shop+Office" alt="Shop Office" class="w-full h-full object-cover" loading="lazy" onerror="console.error('Image failed to load:', this.src); this.style.background='#e5e7eb'; this.alt='Image unavailable';"> <!-- Navigation Arrows -->
+         <div class="absolute inset-0 flex items-center justify-between px-2 pointer-events-none opacity-0 hover:opacity-100 transition-opacity" style="background: rgba(0,0,0,0.2);"><button id="shopoffice-prev-btn" class="slideshow-nav-btn pointer-events-auto bg-white rounded-full p-2 transition shadow-lg" style="background-color: rgba(255, 255, 255, 0.8);"><i data-lucide="chevron-left" style="width: 20px; height: 20px; color: black;"></i></button> <button id="shopoffice-next-btn" class="slideshow-nav-btn pointer-events-auto bg-white rounded-full p-2 transition shadow-lg" style="background-color: rgba(255, 255, 255, 0.8);"><i data-lucide="chevron-right" style="width: 20px; height: 20px; color: black;"></i></button>
+         </div><!-- Image Dot Indicators -->
+         <div class="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-2">
+          <button id="shopoffice-dot-0" class="shopoffice-dot w-2 h-2 rounded-full bg-white cursor-pointer transition hover:bg-gray-200 active-dot" style="opacity: 1;" title="Image 1"></button> <button id="shopoffice-dot-1" class="shopoffice-dot w-2 h-2 rounded-full bg-white cursor-pointer transition hover:bg-gray-200" style="opacity: 0.5;" title="Image 2"></button>
+         </div>
+        </div>
+        <div class="p-4 flex flex-col justify-between flex-1">
+         <div>
+          <div class="property-icon bg-gradient-to-br from-purple-500 to-purple-600" style="width: 48px; height: 48px; margin-bottom: 12px;">
+           <i data-lucide="store" style="width: 20px; height: 20px; color: white;"></i>
+          </div>
+          <h3 id="shopoffice-title" class="text-base font-bold text-gray-900 mb-1">Shop Office</h3>
+          <p id="shopoffice-specs" class="text-xs text-gray-600 mb-3">2-Storey Commercial, From 4,013 sq.ft.</p>
+         </div>
+         <p id="shopoffice-price" class="text-sm font-bold text-purple-600">Coming Soon</p>
+        </div>
+       </div>
+      </div>
+     </section><!-- Development Features Section -->
+     <section class="mb-20" id="amenities-section">
+      <div class="text-center mb-12">
+       <h2 class="text-4xl font-bold text-gray-900 mb-3">Development Features</h2>
+       <p class="text-xl text-gray-600">Discover the exceptional features that make Riveria Garden unique</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+       <!-- Feature 1 -->
+       <div class="bg-white rounded-16 overflow-hidden shadow-md border border-gray-100 p-8 hover:shadow-lg transition">
+        <div class="flex items-start gap-4 mb-4">
+         <div class="flex-shrink-0 pt-1">
+          <i data-lucide="home" style="width: 32px; height: 32px; color: #3b82f6;"></i>
+         </div>
+         <div class="flex-1">
+          <h3 id="dev-feature-1-title" class="text-2xl font-bold text-gray-900 mb-2">Integrated Mixed Development</h3>
+          <p id="dev-feature-1-desc" class="text-gray-600 leading-relaxed">A 627-acres master-planned township with landed and highrise homes, vibrant commercial hub, and lifestyle spaces, crafted for elevated living, vibrant business and lasting value.</p>
+         </div>
+        </div>
+       </div><!-- Feature 2 -->
+       <div class="bg-white rounded-16 overflow-hidden shadow-md border border-gray-100 p-8 hover:shadow-lg transition">
+        <div class="flex items-start gap-4 mb-4">
+         <div class="flex-shrink-0 pt-1">
+          <i data-lucide="shield-check" style="width: 32px; height: 32px; color: #10b981;"></i>
+         </div>
+         <div class="flex-1">
+          <h3 id="dev-feature-2-title" class="text-2xl font-bold text-gray-900 mb-2">Freehold Title</h3>
+          <p id="dev-feature-2-desc" class="text-gray-600 leading-relaxed">Secure permanent ownership with freehold land titles for lasting value and investment security.</p>
+         </div>
+        </div>
+       </div><!-- Feature 3 -->
+       <div class="bg-white rounded-16 overflow-hidden shadow-md border border-gray-100 p-8 hover:shadow-lg transition">
+        <div class="flex items-start gap-4 mb-4">
+         <div class="flex-shrink-0 pt-1">
+          <i data-lucide="map-pin" style="width: 32px; height: 32px; color: #f59e0b;"></i>
+         </div>
+         <div class="flex-1">
+          <h3 id="dev-feature-3-title" class="text-2xl font-bold text-gray-900 mb-2">Prime Location</h3>
+          <p id="dev-feature-3-desc" class="text-gray-600 leading-relaxed">Strategically positioned near key amenities, business districts, and transportation hubs.</p>
+         </div>
+        </div>
+       </div><!-- Feature 4 -->
+       <div class="bg-white rounded-16 overflow-hidden shadow-md border border-gray-100 p-8 hover:shadow-lg transition">
+        <div class="flex items-start gap-4 mb-4">
+         <div class="flex-shrink-0 pt-1">
+          <i data-lucide="transit" style="width: 32px; height: 32px; color: #8b5cf6;"></i>
+         </div>
+         <div class="flex-1">
+          <h3 id="dev-feature-4-title" class="text-2xl font-bold text-gray-900 mb-2">Seamless Connectivity &amp; Access</h3>
+          <p id="dev-feature-4-desc" class="text-gray-600 leading-relaxed">Excellent connectivity with easy access to major highways, public transport, and neighboring cities.</p>
+         </div>
+        </div>
+       </div><!-- Feature 5 -->
+       <div class="bg-white rounded-16 overflow-hidden shadow-md border border-gray-100 p-8 hover:shadow-lg transition">
+        <div class="flex items-start gap-4 mb-4">
+         <div class="flex-shrink-0 pt-1">
+          <i data-lucide="sparkles" style="width: 32px; height: 32px; color: #ec4899;"></i>
+         </div>
+         <div class="flex-1">
+          <h3 id="dev-feature-5-title" class="text-2xl font-bold text-gray-900 mb-2">Excellent Amenities</h3>
+          <p id="dev-feature-5-desc" class="text-gray-600 leading-relaxed">Comprehensive lifestyle amenities including retail, dining, sports, and community facilities.</p>
+         </div>
+        </div>
+       </div><!-- Feature 6 -->
+       <div class="bg-white rounded-16 overflow-hidden shadow-md border border-gray-100 p-8 hover:shadow-lg transition">
+        <div class="flex items-start gap-4 mb-4">
+         <div class="flex-shrink-0 pt-1">
+          <i data-lucide="trees" style="width: 32px; height: 32px; color: #06b6d4;"></i>
+         </div>
+         <div class="flex-1">
+          <h3 id="dev-feature-6-title" class="text-2xl font-bold text-gray-900 mb-2">Riverside &amp; Eco Nature Living</h3>
+          <p id="dev-feature-6-desc" class="text-gray-600 leading-relaxed">Serene riverside living with green spaces, parks, and sustainable eco-friendly design.</p>
+         </div>
+        </div>
+       </div><!-- Feature 7 -->
+       <div class="bg-white rounded-16 overflow-hidden shadow-md border border-gray-100 p-8 hover:shadow-lg transition">
+        <div class="flex items-start gap-4 mb-4">
+         <div class="flex-shrink-0 pt-1">
+          <i data-lucide="dumbbell" style="width: 32px; height: 32px; color: #ef4444;"></i>
+         </div>
+         <div class="flex-1">
+          <h3 id="dev-feature-7-title" class="text-2xl font-bold text-gray-900 mb-2">Premium Club House</h3>
+          <p id="dev-feature-7-desc" class="text-gray-600 leading-relaxed">Exclusive clubhouse facilities featuring pools, gym, lounge areas, and entertainment spaces.</p>
+         </div>
+        </div>
+       </div><!-- Feature 8 -->
+       <div class="bg-white rounded-16 overflow-hidden shadow-md border border-gray-100 p-8 hover:shadow-lg transition">
+        <div class="flex items-start gap-4 mb-4">
+         <div class="flex-shrink-0 pt-1">
+          <i data-lucide="camera" style="width: 32px; height: 32px; color: #14b8a6;"></i>
+         </div>
+         <div class="flex-1">
+          <h3 id="dev-feature-8-title" class="text-2xl font-bold text-gray-900 mb-2">24/7 Security</h3>
+          <p id="dev-feature-8-desc" class="text-gray-600 leading-relaxed">Multi-tier security system with CCTV surveillance and guarded perimeter for your peace of mind.</p>
+         </div>
+        </div>
+       </div>
+      </div>
+     </section><!-- Prime Location Section -->
+     <section class="mb-20">
+      <div class="text-center mb-12">
+       <h2 class="text-4xl font-bold text-gray-900 mb-3">Prime Location</h2>
+       <p id="location-title" class="text-xl text-gray-600">Strategic Location in Iskandar Puteri</p>
+      </div>
+      <div class="bg-white rounded-16 overflow-hidden shadow-lg border border-gray-100">
+       <div class="grid grid-cols-1 lg:grid-cols-2 gap-0"><!-- Location Image -->
+        <div class="relative w-full cursor-pointer hover:opacity-90 transition" style="min-height: 400px; background: #f3f4f6; display: flex; align-items: center; justify-content: center;">
+         <img id="location-image" src="https://via.placeholder.com/600x400/e5e7eb/999999?text=Location+Map" alt="Prime Location Map" class="w-full h-full" style="object-fit: contain; cursor: pointer;" loading="lazy" onerror="console.error('Image failed to load:', this.src); this.style.background='#e5e7eb'; this.alt='Image unavailable';">
+        </div><!-- Location Details -->
+        <div class="p-12 flex flex-col justify-center">
+         <h3 class="text-3xl font-bold text-gray-900 mb-6">Discover Your Perfect Location</h3>
+         <p id="location-description" class="text-gray-600 text-lg leading-relaxed mb-8">Positioned in the heart of Iskandar Puteri, Riveria Garden offers unmatched accessibility to major commercial hubs, educational institutions, and lifestyle amenities. Your dream home is just minutes away from everything you need.</p><button id="explore-location-btn" class="cta-button bg-blue-600 text-white hover:bg-blue-700 self-start mb-8"> <i data-lucide="map-pin" style="width: 20px; height: 20px;"></i> Explore Location </button>
+         <div class="space-y-4">
+          <div class="flex items-start gap-4">
+           <div class="flex-shrink-0 pt-1">
+            <i data-lucide="map-pin" style="width: 24px; height: 24px; color: #3b82f6;"></i>
+           </div>
+           <div>
+            <h4 class="font-bold text-gray-900 mb-1">Strategic Access</h4>
+            <p class="text-gray-600 text-sm">Quick access to highways, shopping malls, and business districts</p>
+           </div>
+          </div>
+          <div class="flex items-start gap-4">
+           <div class="flex-shrink-0 pt-1">
+            <i data-lucide="building-2" style="width: 24px; height: 24px; color: #10b981;"></i>
+           </div>
+           <div>
+            <h4 class="font-bold text-gray-900 mb-1">Modern Infrastructure</h4>
+            <p class="text-gray-600 text-sm">Surrounded by world-class facilities and international standards</p>
+           </div>
+          </div>
+          <div class="flex items-start gap-4">
+           <div class="flex-shrink-0 pt-1">
+            <i data-lucide="users" style="width: 24px; height: 24px; color: #f59e0b;"></i>
+           </div>
+           <div>
+            <h4 class="font-bold text-gray-900 mb-1">Vibrant Community</h4>
+            <p class="text-gray-600 text-sm">Part of a thriving, dynamic neighborhood with excellent amenities</p>
+           </div>
+          </div>
+         </div>
+        </div>
+       </div>
+      </div>
+     </section><!-- Masterplan Section -->
+     <section class="mb-20">
+      <div class="text-center mb-12">
+       <h2 class="text-4xl font-bold text-gray-900 mb-3">Masterplan</h2>
+       <p class="text-xl text-gray-600">Discover the visionary layout and strategic design of Wawari Premium Living</p>
+      </div>
+      <div class="bg-white rounded-16 overflow-hidden shadow-lg border border-gray-100 p-12">
+       <h3 class="text-3xl font-bold text-gray-900 mb-6">Development Overview</h3>
+       <p class="text-gray-600 text-lg leading-relaxed mb-12">Riveria Garden @ Wawari is a visionary 1,026-acre integrated township meticulously developed to offer residents a harmonious blend of luxury, comfort, and natural beauty. Strategically located within the core growth corridor of Iskandar Puteri, the development enjoys prime positioning and exceptional long-term growth potential. The masterplan features a comprehensive mix of landed residences, high-rise developments, and commercial components — thoughtfully designed to create a modern, self-sustaining township that integrates living, commerce, and leisure.</p><!-- Masterplan Image 1 -->
+       <div class="mb-8 rounded-12 overflow-hidden shadow-md border border-gray-200" style="background: #f3f4f6; display: flex; align-items: center; justify-content: center; min-height: 300px;">
+        <img id="masterplan-image-1" src="https://kslriveriagarden.com/masterplan1.jpeg" alt="Masterplan View 1" class="w-full h-full" style="object-fit: contain; cursor: pointer; max-height: 600px;" loading="lazy" onerror="console.error('Image failed to load:', this.src); this.style.background='#e5e7eb'; this.alt='Image unavailable';">
+       </div><!-- Map Image -->
+       <div class="mb-8 rounded-12 overflow-hidden shadow-md border border-gray-200" style="background: #f3f4f6; display: flex; align-items: center; justify-content: center; min-height: 300px;">
+        <img id="map-image" src="https://kslriveriagarden.com/map1.jpg" alt="Site Map" class="w-full h-full" style="object-fit: contain; cursor: pointer; max-height: 600px;" loading="lazy" onerror="console.error('Image failed to load:', this.src); this.style.background='#e5e7eb'; this.alt='Image unavailable';">
+       </div><!-- Masterplan Image 2 -->
+       <div class="rounded-12 overflow-hidden shadow-md border border-gray-200" style="background: #f3f4f6; display: flex; align-items: center; justify-content: center; min-height: 300px;">
+        <img id="masterplan-image-2" src="https://kslriveriagarden.com/masterplan.jpeg" alt="Masterplan View 2" class="w-full h-full" style="object-fit: contain; cursor: pointer; max-height: 600px;" loading="lazy" onerror="console.error('Image failed to load:', this.src); this.style.background='#e5e7eb'; this.alt='Image unavailable';">
+       </div>
+      </div>
+     </section><!-- Video Promotion Section -->
+     <section class="mb-20">
+      <div class="text-center mb-12">
+       <h2 class="text-4xl font-bold text-gray-900 mb-3">Watch Our Project Video</h2>
+       <p class="text-xl text-gray-600">Get an exclusive preview of Riveria Garden</p>
+      </div>
+      <div class="bg-white rounded-16 overflow-hidden shadow-lg border border-gray-100">
+       <div class="relative w-full bg-black" style="padding-bottom: 56.25%; position: relative;">
+        <video id="project-video" class="absolute inset-0 w-full h-full" controls style="border: none;">
+         <source src="https://youtu.be/SCXN-KA06w4" type="video/mp4"> Your browser does not support the video tag.
+        </video>
+       </div>
+       <div class="p-8">
+        <h3 id="video-title" class="text-2xl font-bold text-gray-900 mb-3">Riveria Garden - Project Walkthrough</h3>
+        <p id="video-description" class="text-gray-600 text-lg">Watch an exclusive tour of Riveria Garden and discover why it's the perfect choice for your lifestyle and investment needs.</p>
+       </div>
+      </div>
+     </section><!-- Project Highlights Section -->
+     <section class="mb-20">
+      <div class="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-16 p-12 border border-blue-100">
+       <h2 class="text-3xl font-bold text-gray-900 mb-8">Project Highlights</h2>
+       <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="flex gap-4">
+         <div class="flex-shrink-0">
+          <i data-lucide="check-circle" style="width: 28px; height: 28px; color: #10b981; margin-top: 4px;"></i>
+         </div>
+         <div>
+          <h3 id="highlight1" class="text-lg font-bold text-gray-900 mb-2">Near shopping malls and schools</h3>
+          <p class="text-gray-600 text-sm">Easy access to major shopping centers and quality educational institutions</p>
+         </div>
+        </div>
+        <div class="flex gap-4">
+         <div class="flex-shrink-0">
+          <i data-lucide="check-circle" style="width: 28px; height: 28px; color: #10b981; margin-top: 4px;"></i>
+         </div>
+         <div>
+          <h3 id="highlight2" class="text-lg font-bold text-gray-900 mb-2">24/7 Security &amp; Maintenance</h3>
+          <p class="text-gray-600 text-sm">Round-the-clock security personnel and professional maintenance services</p>
+         </div>
+        </div>
+       </div>
+      </div>
+     </section>
+     <section class="bg-white rounded-16 p-12 mb-20 shadow-md border border-gray-100">
+      <h2 class="text-4xl font-bold text-gray-900 mb-12 text-center">Why Choose Riveria Garden?</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+       <div class="feature-item">
+        <div class="feature-icon bg-blue-100">
+         <i data-lucide="map-pin" style="width: 24px; height: 24px; color: #3b82f6;"></i>
+        </div>
+        <div>
+         <h3 id="feature1-title" class="text-xl font-bold text-gray-900 mb-2">Strategic Location</h3>
+         <p class="text-gray-600">Perfectly situated in the heart of Iskandar Puteri with easy access to highways and amenities</p>
+        </div>
+       </div>
+       <div class="feature-item">
+        <div class="feature-icon bg-emerald-100">
+         <i data-lucide="sparkles" style="width: 24px; height: 24px; color: #10b981;"></i>
+        </div>
+        <div>
+         <h3 id="feature2-title" class="text-xl font-bold text-gray-900 mb-2">Modern Amenities</h3>
+         <p class="text-gray-600">State-of-the-art facilities including gyms, pools, gardens, and recreational areas</p>
+        </div>
+       </div>
+       <div class="feature-item">
+        <div class="feature-icon bg-amber-100">
+         <i data-lucide="users" style="width: 24px; height: 24px; color: #f59e0b;"></i>
+        </div>
+        <div>
+         <h3 id="feature3-title" class="text-xl font-bold text-gray-900 mb-2">Family-Friendly Community</h3>
+         <p class="text-gray-600">Safe, vibrant community with quality schools and family-oriented attractions nearby</p>
+        </div>
+       </div>
+      </div>
+     </section><!-- About Developer Section -->
+     <section class="mb-20" id="about-developer-section">
+      <div class="text-center mb-12">
+       <h2 class="text-4xl font-bold text-gray-900 mb-3">About the Developer</h2>
+       <p class="text-xl text-gray-600">Learn more about KSL and our commitment to excellence</p>
+      </div>
+      <div class="bg-white rounded-16 overflow-hidden shadow-lg border border-gray-100">
+       <div class="grid grid-cols-1 lg:grid-cols-2 gap-0"><!-- Developer Logo/Image -->
+        <div class="relative w-full" style="min-height: 400px; background: linear-gradient(135deg, #f8f9fa 0%, #e8eef7 100%); display: flex; align-items: center; justify-content: center;">
+         <div class="text-center"><img src="https://kslriveriagarden.com/logo.PNG" alt="KSL Logo" class="h-64 mb-8 mx-auto" loading="lazy" onerror="console.error('Image failed to load:', this.src); this.style.display='none'; document.querySelector('#developer-logo-fallback').style.display='block';">
+          <div id="developer-logo-fallback" style="display: none; color: #1e3a8a; text-6xl font-bold mb-4;">
+           KSL
+          </div>
+          <p class="text-blue-700 text-xl font-semibold">Building Dreams Since 1985</p>
+         </div>
+        </div><!-- Developer Info -->
+        <div class="p-12 flex flex-col justify-center">
+         <h3 class="text-3xl font-bold text-gray-900 mb-4">Trusted Developer</h3>
+         <p id="about-developer-intro" class="text-gray-600 text-lg leading-relaxed mb-6">KSL is one of Malaysia's leading property developers with a track record of delivering world-class residential and commercial developments. With over 35 years of experience, we have earned the trust of thousands of satisfied homeowners.</p>
+         <div class="space-y-4 mb-8">
+          <div class="flex items-start gap-4">
+           <div class="flex-shrink-0 pt-1">
+            <i data-lucide="award" style="width: 24px; height: 24px; color: #3b82f6;"></i>
+           </div>
+           <div>
+            <h4 class="font-bold text-gray-900 mb-1">Award-Winning Projects</h4>
+            <p class="text-gray-600 text-sm">Recognized for excellence in design, construction quality, and customer service</p>
+           </div>
+          </div>
+          <div class="flex items-start gap-4">
+           <div class="flex-shrink-0 pt-1">
+            <i data-lucide="shield-check" style="width: 24px; height: 24px; color: #10b981;"></i>
+           </div>
+           <div>
+            <h4 class="font-bold text-gray-900 mb-1">Quality Assurance</h4>
+            <p class="text-gray-600 text-sm">Committed to the highest standards of construction and finishing</p>
+           </div>
+          </div>
+          <div class="flex items-start gap-4">
+           <div class="flex-shrink-0 pt-1">
+            <i data-lucide="users" style="width: 24px; height: 24px; color: #f59e0b;"></i>
+           </div>
+           <div>
+            <h4 class="font-bold text-gray-900 mb-1">Customer-Centric Approach</h4>
+            <p class="text-gray-600 text-sm">Your satisfaction and peace of mind are our top priorities</p>
+           </div>
+          </div>
+          <div class="flex items-start gap-4">
+           <div class="flex-shrink-0 pt-1">
+            <i data-lucide="zap" style="width: 24px; height: 24px; color: #ec4899;"></i>
+           </div>
+           <div>
+            <h4 class="font-bold text-gray-900 mb-1">Innovation &amp; Sustainability</h4>
+            <p class="text-gray-600 text-sm">Pioneering eco-friendly developments with smart, sustainable living solutions</p>
+           </div>
+          </div>
+         </div>
+         <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
+          <h4 class="font-bold text-gray-900 mb-2">Our Portfolio</h4>
+          <ul class="text-gray-600 text-sm space-y-1">
+           <li>✓ 20+ residential developments completed</li>
+           <li>✓ 10+ commercial projects delivered</li>
+           <li>✓ 15,000+ satisfied homeowners</li>
+           <li>✓ Multiple international awards for design excellence</li>
+          </ul>
+         </div>
+        </div>
+       </div>
+      </div>
+     </section><!-- CTA Section -->
+     <section class="bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-16 p-12 text-center">
+      <h2 class="text-3xl font-bold mb-4">Ready to Find Your Perfect Home?</h2>
+      <p class="text-xl mb-8 text-blue-100">Explore our virtual showroom or connect with our team for more details</p>
+      <div class="flex flex-col md:flex-row gap-4 justify-center"><a id="whatsapp-bottom" href="https://api.whatsapp.com/send?phone=60177288652&amp;text=Hi%2C%20I%27m%20interested%20in%20KSL%20Riveria%20Garden.%20Can%20you%20share%20some%20info%20to%20me%3F%0AThanks" target="_blank" rel="noopener noreferrer" class="cta-button bg-white text-blue-600 hover:bg-blue-50"> <i data-lucide="message-circle" style="width: 20px; height: 20px;"></i> Message on WhatsApp </a> <a id="vr-link-bottom" href="https://360media.com.my/KSL/riveriagarden/" target="_blank" rel="noopener noreferrer" class="cta-button bg-yellow-400 text-blue-900 hover:bg-yellow-300"> <i data-lucide="eye" style="width: 20px; height: 20px;"></i> Virtual Showroom </a>
+      </div>
+     </section>
+    </div>
+   </main><!-- Property Detail Modal -->
+   <div id="property-modal" style="display: none;" class="fixed inset-0 z-50 bg-black bg-opacity-75 flex items-center justify-center p-4 overflow-auto">
+    <div class="bg-white rounded-lg max-w-3xl w-full my-8 shadow-2xl">
+     <div class="sticky top-0 bg-white border-b border-gray-200 flex items-center justify-between p-6">
+      <h2 id="modal-property-title" class="text-2xl font-bold text-gray-900">Property Details</h2><button id="close-property-modal" class="text-gray-500 hover:text-gray-700 transition"> <i data-lucide="x" style="width: 28px; height: 28px;"></i> </button>
+     </div>
+     <div class="p-6 overflow-auto" style="max-height: 70vh;">
+      <div class="mb-6"><img id="modal-property-image" src="" alt="Property" class="w-full rounded-lg object-cover" style="aspect-ratio: 16/9; max-height: 400px;">
+      </div>
+      <div class="space-y-6">
+       <div>
+        <h3 class="text-lg font-bold text-gray-900 mb-2">Property Type</h3>
+        <p id="modal-property-type" class="text-gray-600">N/A</p>
+       </div>
+       <div>
+        <h3 class="text-lg font-bold text-gray-900 mb-2">Specifications</h3>
+        <p id="modal-property-specs" class="text-gray-600">N/A</p>
+       </div>
+       <div id="modal-features-container"></div>
+       <div id="modal-floorplan-section">
+        <h3 class="text-lg font-bold text-gray-900 mb-2">Floor Plan</h3>
+        <div class="relative inline-block w-full"><img id="modal-floorplan" src="" alt="Floor Plan" class="w-full rounded-lg object-contain mb-4 cursor-pointer hover:opacity-80 transition" style="max-height: 300px;">
+         <div class="absolute inset-0 flex items-center justify-center pointer-events-none rounded-lg" style="background: rgba(0, 0, 0, 0);">
+          <div class="bg-white bg-opacity-90 rounded-full p-3 shadow-lg flex items-center justify-center" style="width: 50px; height: 50px;"><i data-lucide="maximize-2" style="width: 28px; height: 28px; color: #3b82f6;"></i>
+          </div>
+         </div>
+        </div>
+       </div>
+       <div>
+        <p id="modal-property-price" class="text-2xl font-bold text-blue-600">N/A</p>
+       </div>
+       <div class="pt-4"><a id="modal-whatsapp-btn" href="#" target="_blank" rel="noopener noreferrer" class="cta-button bg-green-500 text-white hover:bg-green-600 w-full justify-center"> <i data-lucide="message-circle" style="width: 20px; height: 20px;"></i> Inquire via WhatsApp </a>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div><!-- Virtual Tour Modal -->
+   <div id="vr-modal" style="display: none;" class="fixed inset-0 z-50 bg-black bg-opacity-75 flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-auto shadow-2xl">
+     <div class="sticky top-0 bg-white border-b border-gray-200 flex items-center justify-between p-4">
+      <h2 class="text-2xl font-bold text-gray-900">Virtual Showroom Tour</h2><button id="close-vr-modal" class="text-gray-500 hover:text-gray-700 transition"> <i data-lucide="x" style="width: 28px; height: 28px;"></i> </button>
+     </div>
+     <div class="p-6">
+      <div class="relative w-full bg-black" style="padding-bottom: 75%; max-height: 80vh;"><iframe id="vr-modal-iframe" class="absolute inset-0 w-full h-full" src="https://360media.com.my/KSL/riveriagarden/" title="Virtual Showroom" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border: none;"></iframe>
+      </div>
+      <p class="text-gray-600 text-sm mt-4">Experience our virtual showroom in full immersive mode. Use your mouse or touch to navigate around the property.</p>
+     </div>
+    </div>
+   </div><!-- Floor Plan Image Enlargement Modal -->
+   <div id="floorplan-modal" style="display: none;" class="fixed inset-0 z-50 bg-black bg-opacity-75 flex items-center justify-center p-4 overflow-auto">
+    <div class="bg-white rounded-lg max-w-4xl w-full shadow-2xl" style="max-height: 90vh;">
+     <div class="sticky top-0 bg-white border-b border-gray-200 flex items-center justify-between p-4">
+      <h2 class="text-2xl font-bold text-gray-900">Floor Plan</h2>
+      <div class="flex items-center gap-4">
+       <button id="zoom-in-btn" class="text-gray-600 hover:text-gray-900 transition" title="Zoom In"> <i data-lucide="zoom-in" style="width: 24px; height: 24px;"></i> </button> <button id="zoom-out-btn" class="text-gray-600 hover:text-gray-900 transition" title="Zoom Out"> <i data-lucide="zoom-out" style="width: 24px; height: 24px;"></i> </button> <button id="close-floorplan-modal" class="text-gray-500 hover:text-gray-700 transition"> <i data-lucide="x" style="width: 28px; height: 28px;"></i> </button>
+      </div>
+     </div>
+     <div class="p-6 overflow-auto" style="max-height: calc(90vh - 70px);">
+      <div id="floorplan-container" class="flex items-center justify-center" style="min-height: 400px;">
+       <img id="floorplan-enlarged" src="" alt="Floor Plan" class="rounded-lg object-contain" style="max-width: 100%; cursor: grab; user-select: none;">
+      </div>
+     </div>
+    </div>
+   </div><!-- Location Map Modal -->
+   <div id="location-map-modal" style="display: none;" class="fixed inset-0 z-50 bg-black bg-opacity-75 flex items-center justify-center p-4 overflow-auto">
+    <div class="bg-white rounded-lg max-w-4xl w-full shadow-2xl" style="max-height: 90vh;">
+     <div class="sticky top-0 bg-white border-b border-gray-200 flex items-center justify-between p-4">
+      <h2 class="text-2xl font-bold text-gray-900">Location Map</h2>
+      <div class="flex items-center gap-4">
+       <button id="location-map-zoom-in-btn" class="text-gray-600 hover:text-gray-900 transition" title="Zoom In"> <i data-lucide="zoom-in" style="width: 24px; height: 24px;"></i> </button> <button id="location-map-zoom-out-btn" class="text-gray-600 hover:text-gray-900 transition" title="Zoom Out"> <i data-lucide="zoom-out" style="width: 24px; height: 24px;"></i> </button> <button id="close-location-map-modal" class="text-gray-500 hover:text-gray-700 transition"> <i data-lucide="x" style="width: 28px; height: 28px;"></i> </button>
+      </div>
+     </div>
+     <div class="p-6 overflow-auto" style="max-height: calc(90vh - 70px);">
+      <div id="location-map-container" class="flex items-center justify-center" style="min-height: 400px;">
+       <img id="location-map-enlarged" src="" alt="Location Map" class="rounded-lg object-contain" style="max-width: 100%; cursor: grab; user-select: none;">
+      </div>
+     </div>
+    </div>
+   </div><!-- Map Image Modal -->
+   <div id="map-image-modal" style="display: none;" class="fixed inset-0 z-50 bg-black bg-opacity-75 flex items-center justify-center p-4 overflow-auto">
+    <div class="bg-white rounded-lg max-w-4xl w-full shadow-2xl" style="max-height: 90vh;">
+     <div class="sticky top-0 bg-white border-b border-gray-200 flex items-center justify-between p-4">
+      <h2 class="text-2xl font-bold text-gray-900">Site Map</h2>
+      <div class="flex items-center gap-4">
+       <button id="map-zoom-in-btn" class="text-gray-600 hover:text-gray-900 transition" title="Zoom In"> <i data-lucide="zoom-in" style="width: 24px; height: 24px;"></i> </button> <button id="map-zoom-out-btn" class="text-gray-600 hover:text-gray-900 transition" title="Zoom Out"> <i data-lucide="zoom-out" style="width: 24px; height: 24px;"></i> </button> <button id="close-map-image-modal" class="text-gray-500 hover:text-gray-700 transition"> <i data-lucide="x" style="width: 28px; height: 28px;"></i> </button>
+      </div>
+     </div>
+     <div class="p-6 overflow-auto" style="max-height: calc(90vh - 70px);">
+      <div id="map-image-container" class="flex items-center justify-center" style="min-height: 400px;">
+       <img id="map-image-enlarged" src="" alt="Site Map" class="rounded-lg object-contain" style="max-width: 100%; cursor: grab; user-select: none;">
+      </div>
+     </div>
+    </div>
+   </div><!-- Location Image Modal -->
+   <div id="location-image-modal" style="display: none;" class="fixed inset-0 z-50 bg-black bg-opacity-75 flex items-center justify-center p-4 overflow-auto">
+    <div class="bg-white rounded-lg max-w-4xl w-full shadow-2xl" style="max-height: 90vh;">
+     <div class="sticky top-0 bg-white border-b border-gray-200 flex items-center justify-between p-4">
+      <h2 class="text-2xl font-bold text-gray-900">Location Map</h2>
+      <div class="flex items-center gap-4">
+       <button id="location-zoom-in-btn" class="text-gray-600 hover:text-gray-900 transition" title="Zoom In"> <i data-lucide="zoom-in" style="width: 24px; height: 24px;"></i> </button> <button id="location-zoom-out-btn" class="text-gray-600 hover:text-gray-900 transition" title="Zoom Out"> <i data-lucide="zoom-out" style="width: 24px; height: 24px;"></i> </button> <button id="close-location-image-modal" class="text-gray-500 hover:text-gray-700 transition"> <i data-lucide="x" style="width: 28px; height: 28px;"></i> </button>
+      </div>
+     </div>
+     <div class="p-6 overflow-auto" style="max-height: calc(90vh - 70px);">
+      <div id="location-image-container" class="flex items-center justify-center" style="min-height: 400px;">
+       <img id="location-image-enlarged" src="" alt="Location Map" class="rounded-lg object-contain" style="max-width: 100%; cursor: grab; user-select: none;">
+      </div>
+     </div>
+    </div>
+   </div><!-- Footer -->
+   <footer class="bg-gray-900 text-gray-300 py-12 px-6 mt-auto">
+    <div class="max-w-6xl mx-auto">
+     <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-8">
+      <div>
+       <h4 id="footer-project" class="text-white font-bold text-lg mb-3">Riveria Garden @ Wawari</h4>
+       <p class="text-sm">Premium residential and commercial development in Iskandar Puteri</p>
+      </div>
+      <div>
+       <h4 class="text-white font-bold text-lg mb-3">Quick Links</h4>
+       <ul class="space-y-2 text-sm">
+        <li><a href="#property-types-section" class="hover:text-white transition">Property Types</a></li>
+        <li><a href="#amenities-section" class="hover:text-white transition">Amenities</a></li>
+        <li><a href="#about-developer-section" class="hover:text-white transition">About Developer</a></li>
+       </ul>
+      </div>
+      <div>
+       <h4 class="text-white font-bold text-lg mb-3">Contact Us</h4>
+       <p id="footer-contact" class="text-sm">your@email.com | +60 1X XXXX XXXX</p>
+      </div>
+     </div>
+     <div class="border-t border-gray-800 pt-8">
+      <p class="text-center text-sm mb-4">© 2023 Wawari Properties. All Rights Reserved.</p>
+      <p class="text-center text-xs text-gray-400 italic">⚠️ Disclaimer: This website is created by the appointed marketing agent. All information, specifications, prices, and project details are subject to change without notice at the discretion of the developer. Please contact the developer directly for the most current and accurate information. Images and renderings are for illustration purposes only.</p>
+     </div>
+    </div>
+   </footer>
+  </div>
+  <script>
+    const defaultConfig = {
+      project_name: "Riveria Garden @ Wawari, Iskandar Puteri",
+      developer_name: "KSL",
+      location_details: "Wawari, Iskandar Puteri, Johor",
+      tagline: "Your Dream Lifestyle Awaits",
+      vr_link: "https://360media.com.my/KSL/riveriagarden",
+      hero_image: "https://drive.google.com/uc?export=view&id=1sUiE3EgXyYPxmlOt73W2ScBEjy_aaJ2G",
+      gallery_image_1: "https://kslriveriagarden.com/Double%20Storey%20Cluster%20House%20main.jpeg",
+      gallery_image_2: "https://kslriveriagarden.com/Double%20Storey%20Terrace%20House%20main.jpeg",
+      gallery_image_3: "https://kslriveriagarden.com/Wawari%20clubhouse%20main.jpeg",
+      gallery_image_4: "https://kslriveriagarden.com/riverhaus.jpeg",
+      location_title: "Strategic Location in Iskandar Puteri",
+      location_description: "Positioned in the heart of Iskandar Puteri, Riveria Garden offers unmatched accessibility to major commercial hubs, educational institutions, and lifestyle amenities. Your dream home is just minutes away from everything you need.",
+      video_url: "https://kslriveriagarden.com/video.MP4",
+      video_title: "Riveria Garden - Project Walkthrough",
+      video_description: "Watch an exclusive tour of Riveria Garden and discover why it's the perfect choice for your lifestyle and investment needs.",
+      apartment_image: "https://kslriveriagarden.com/riverhaus.jpeg",
+      apartment_image_2: "https://kslriveriagarden.com/s-a.jpeg",
+      apartment_floorplan: "https://kslriveriagarden.com/s-a-layout.png",
+      apartment_title: "Service Apartment (Riverhaus)",
+      apartment_price: "From RM 312,000",
+      apartment_specs: "Studio to 3-bedroom units & Duplexes | 501 - 1,471 sq.ft.",
+      terrace_image: "https://kslriveriagarden.com/Double%20Storey%20Terrace%20House%20main.jpeg",
+      terrace_title: "Double Storey Terrace House (Aluna Series)",
+      terrace_price: "From RM 1,009,800",
+      terrace_specs: "4BR + 4BA | 2,219 sq.ft. | Land: 20' × 70'",
+      cluster_image: "https://kslriveriagarden.com/Double%20Storey%20Cluster%20House%20main.jpeg",
+      cluster_image_2: "https://kslriveriagarden.com/cluster.png",
+      cluster_title: "Double Storey Cluster House (Elora Series)",
+      cluster_price: "From RM 1,448,800",
+      cluster_specs: "4BR + 4BA | 2,592 sq.ft. | Land: 32' × 70'",
+      semidetached_image: "https://i.imgur.com/vpdasJJ.jpeg",
+      semidetached_title: "Double Storey Semi-Detached House (Elora Series)",
+      semidetached_price: "From RM 1,763,800",
+      semidetached_specs: "4+1BR + 4BA | 2,470 sq.ft. | Land: 32' × 80'",
+      shopoffice_image: "https://kslriveriagarden.com/shop4.jpeg",
+      shopoffice_image_2: "https://kslriveriagarden.com/shop5.jpeg",
+      shopoffice_title: "2.5 Storey Shoplots (Riverpoint)",
+      shopoffice_price: "From RM 2,700,000",
+      shopoffice_specs: "2-Storey Commercial | From 4,013 sq.ft.",
+      dev_feature_1_title: "Integrated Mixed Development",
+      dev_feature_1_desc: "A 1,026-acre master-planned township with landed and highrise homes, vibrant commercial hub, and lifestyle spaces, crafted for elevated living, vibrant business and lasting value.",
+      dev_feature_2_title: "Freehold Title",
+      dev_feature_2_desc: "Secure permanent ownership with freehold land titles for lasting value and investment security.",
+      dev_feature_3_title: "Prime Location",
+      dev_feature_3_desc: "Strategically positioned near key amenities, business districts, and transportation hubs.",
+      dev_feature_4_title: "Seamless Connectivity & Access",
+      dev_feature_4_desc: "Excellent connectivity with easy access to major highways, public transport, and neighboring cities.",
+      dev_feature_5_title: "Excellent Amenities",
+      dev_feature_5_desc: "Comprehensive lifestyle amenities including retail, dining, sports, and community facilities.",
+      dev_feature_6_title: "Riverside & Eco Nature Living",
+      dev_feature_6_desc: "Serene riverside living with green spaces, parks, and sustainable eco-friendly design.",
+      dev_feature_7_title: "Premium Club House",
+      dev_feature_7_desc: "Exclusive clubhouse facilities featuring pools, gym, lounge areas, and entertainment spaces.",
+      dev_feature_8_title: "24/7 Security",
+      dev_feature_8_desc: "Multi-tier security system with CCTV surveillance and guarded perimeter for your peace of mind.",
+      about_developer_intro: "KSL is one of Malaysia's leading property developers with a track record of delivering world-class residential and commercial developments. With over 35 years of experience, we have earned the trust of thousands of satisfied homeowners.",
+      developer_founded: "1985",
+      developer_tagline: "Building Dreams Since 1985",
+      feature_one: "Strategic Location",
+      feature_two: "Modern Amenities",
+      feature_three: "Family-Friendly Community",
+      highlight_one: "Near shopping malls and schools",
+      highlight_two: "24/7 Security & Maintenance",
+      contact_info: "williampua@tophills.com.my | +60177288652",
+      whatsapp_number: "+60177288652"
+    };
+
+    let config = { ...defaultConfig };
+    let storedPhotos = {
+      hero: [],
+      apartment: [],
+      terrace: [],
+      cluster: [],
+      semidetached: [],
+      shopoffice: [],
+      location: []
+    };
+    let currentSlideIndices = {
+      hero: 0
+    };
+    let slideshowInterval = null;
+    const SLIDESHOW_INTERVAL = 5000; // 5 seconds per slide
+
+    function getGalleryImages() {
+      // Return default gallery images if no photos uploaded yet
+      if (storedPhotos.hero && storedPhotos.hero.length > 0) {
+        return storedPhotos.hero;
+      }
+      
+      // Use default gallery images from config - all 4 images
+      const images = [
+        config.gallery_image_1 || defaultConfig.gallery_image_1,
+        config.gallery_image_2 || defaultConfig.gallery_image_2,
+        config.gallery_image_3 || defaultConfig.gallery_image_3,
+        config.gallery_image_4 || defaultConfig.gallery_image_4
+      ];
+      
+      // Filter out empty strings and return
+      return images.filter(img => img && img.trim() !== '');
+    }
+
+    function updateSlideshow() {
+      const heroImgElement = document.getElementById('hero-image');
+      const slideCounterEl = document.getElementById('slide-counter');
+      const slideTotalEl = document.getElementById('slide-total');
+      const errorMessage = document.getElementById('image-error-message');
+      
+      if (!heroImgElement) return;
+      
+      const images = getGalleryImages();
+      const totalImages = images.length;
+      
+      if (totalImages > 0 && currentSlideIndices.hero < totalImages) {
+        const currentImage = images[currentSlideIndices.hero];
+        heroImgElement.src = currentImage;
+        heroImgElement.style.display = 'block';
+        
+        if (errorMessage) errorMessage.style.display = 'none';
+        if (slideCounterEl) slideCounterEl.textContent = (currentSlideIndices.hero + 1).toString();
+        if (slideTotalEl) slideTotalEl.textContent = totalImages.toString();
+      } else {
+        heroImgElement.src = '';
+        heroImgElement.style.display = 'none';
+        if (errorMessage) errorMessage.style.display = 'flex';
+        if (slideCounterEl) slideCounterEl.textContent = '0';
+        if (slideTotalEl) slideTotalEl.textContent = '0';
+      }
+    }
+
+    function startSlideshow() {
+      if (slideshowInterval) clearInterval(slideshowInterval);
+      
+      slideshowInterval = setInterval(() => {
+        nextSlide();
+      }, SLIDESHOW_INTERVAL);
+    }
+
+    function stopSlideshow() {
+      if (slideshowInterval) {
+        clearInterval(slideshowInterval);
+        slideshowInterval = null;
+      }
+    }
+
+    function restartSlideshow() {
+      stopSlideshow();
+      startSlideshow();
+    }
+
+    function nextSlide() {
+      const images = getGalleryImages();
+      if (images.length === 0) return;
+      currentSlideIndices.hero = (currentSlideIndices.hero + 1) % images.length;
+      updateSlideshow();
+    }
+
+    function prevSlide() {
+      const images = getGalleryImages();
+      if (images.length === 0) return;
+      currentSlideIndices.hero = (currentSlideIndices.hero - 1 + images.length) % images.length;
+      updateSlideshow();
+    }
+
+    const element = {
+      defaultConfig,
+      onConfigChange: async (newConfig) => {
+        config = newConfig;
+        updateUI();
+        updateSlideshow();
+      },
+      mapToCapabilities: () => ({
+        recolorables: [],
+        borderables: [],
+        fontEditable: undefined,
+        fontSizeable: undefined
+      }),
+      mapToEditPanelValues: () => new Map(Object.entries(config))
+    };
+
+    async function updateUI() {
+      document.getElementById('header-project').textContent = config.project_name || defaultConfig.project_name;
+      document.getElementById('header-developer').textContent = `Developed by ${config.developer_name || defaultConfig.developer_name}`;
+      document.getElementById('header-contact').textContent = config.contact_info || defaultConfig.contact_info;
+
+      document.getElementById('tagline').textContent = config.tagline || defaultConfig.tagline;
+      document.getElementById('location-details').textContent = config.location_details || defaultConfig.location_details;
+      
+      const vrLink = config.vr_link || defaultConfig.vr_link;
+      document.getElementById('vr-link').href = vrLink;
+      document.getElementById('vr-link').target = '_blank';
+      document.getElementById('vr-link').rel = 'noopener noreferrer';
+      
+      document.getElementById('vr-link-bottom').href = vrLink;
+      document.getElementById('vr-link-bottom').target = '_blank';
+      document.getElementById('vr-link-bottom').rel = 'noopener noreferrer';
+
+      const whatsappNumber = config.whatsapp_number || defaultConfig.whatsapp_number || '60177288652';
+      // Remove any leading + or spaces from the number
+      const cleanNumber = whatsappNumber.replace(/\D/g, '');
+      const finalNumber = cleanNumber.startsWith('60') ? cleanNumber : '60' + cleanNumber.replace(/^0/, '');
+      
+      const whatsappMessage = `Hi, I'm interested in Riveria Garden. Can you share more information?`;
+      const encodedMessage = encodeURIComponent(whatsappMessage);
+      const whatsappUrl = `https://wa.me/${finalNumber}?text=${encodedMessage}`;
+      
+      const whatsappHero = document.getElementById('whatsapp-hero');
+      const whatsappBottom = document.getElementById('whatsapp-bottom');
+      
+      if (whatsappHero) {
+        whatsappHero.href = whatsappUrl;
+        whatsappHero.target = '_blank';
+        whatsappHero.rel = 'noopener noreferrer';
+      }
+      
+      if (whatsappBottom) {
+        whatsappBottom.href = whatsappUrl;
+        whatsappBottom.target = '_blank';
+        whatsappBottom.rel = 'noopener noreferrer';
+      }
+
+      // Handle hero image - check if it's a URL, if not use placeholder
+      const heroImg = config.hero_image || defaultConfig.hero_image;
+      if (heroImg && heroImg.trim() !== '') {
+        document.getElementById('hero-image').src = convertGoogleDriveUrl(heroImg);
+      }
+
+      document.getElementById('location-image').src = storedPhotos.location[0] || 'https://kslriveriagarden.com/locationview.png';
+      document.getElementById('location-title').textContent = config.location_title || defaultConfig.location_title;
+      document.getElementById('location-description').textContent = config.location_description || defaultConfig.location_description;
+
+      const videoUrl = config.video_url || defaultConfig.video_url;
+      const videoElement = document.getElementById('project-video');
+      if (videoElement && videoUrl) {
+        videoElement.src = videoUrl;
+        // Also update source element if it exists
+        const sourceElement = videoElement.querySelector('source');
+        if (sourceElement) {
+          sourceElement.src = videoUrl;
+        }
+      }
+      document.getElementById('video-title').textContent = config.video_title || defaultConfig.video_title;
+      document.getElementById('video-description').textContent = config.video_description || defaultConfig.video_description;
+
+      document.getElementById('apt-image').src = storedPhotos.apartment[0] || config.apartment_image || defaultConfig.apartment_image;
+      document.getElementById('apt-title').textContent = config.apartment_title || defaultConfig.apartment_title;
+      document.getElementById('apt-price').textContent = config.apartment_price || defaultConfig.apartment_price;
+      document.getElementById('apt-specs').textContent = config.apartment_specs || defaultConfig.apartment_specs;
+      
+      document.getElementById('terrace-image').src = storedPhotos.terrace[0] || config.terrace_image || defaultConfig.terrace_image;
+      document.getElementById('terrace-title').textContent = config.terrace_title || defaultConfig.terrace_title;
+      document.getElementById('terrace-price').textContent = config.terrace_price || defaultConfig.terrace_price;
+      document.getElementById('terrace-specs').textContent = config.terrace_specs || defaultConfig.terrace_specs;
+      
+      document.getElementById('cluster-image').src = storedPhotos.cluster[0] || config.cluster_image || defaultConfig.cluster_image;
+      document.getElementById('cluster-title').textContent = config.cluster_title || defaultConfig.cluster_title;
+      document.getElementById('cluster-price').textContent = config.cluster_price || defaultConfig.cluster_price;
+      document.getElementById('cluster-specs').textContent = config.cluster_specs || defaultConfig.cluster_specs;
+      
+      document.getElementById('semidetached-image').src = storedPhotos.semidetached[0] || config.semidetached_image || defaultConfig.semidetached_image;
+      document.getElementById('semidetached-title').textContent = config.semidetached_title || defaultConfig.semidetached_title;
+      document.getElementById('semidetached-price').textContent = config.semidetached_price || defaultConfig.semidetached_price;
+      document.getElementById('semidetached-specs').textContent = config.semidetached_specs || defaultConfig.semidetached_specs;
+      
+      document.getElementById('shopoffice-image').src = storedPhotos.shopoffice[0] || config.shopoffice_image || defaultConfig.shopoffice_image;
+      document.getElementById('shopoffice-title').textContent = config.shopoffice_title || defaultConfig.shopoffice_title;
+      document.getElementById('shopoffice-price').textContent = config.shopoffice_price || defaultConfig.shopoffice_price;
+      document.getElementById('shopoffice-specs').textContent = config.shopoffice_specs || defaultConfig.shopoffice_specs;
+
+      document.getElementById('dev-feature-1-title').textContent = config.dev_feature_1_title || defaultConfig.dev_feature_1_title;
+      document.getElementById('dev-feature-1-desc').textContent = config.dev_feature_1_desc || defaultConfig.dev_feature_1_desc;
+      document.getElementById('dev-feature-2-title').textContent = config.dev_feature_2_title || defaultConfig.dev_feature_2_title;
+      document.getElementById('dev-feature-2-desc').textContent = config.dev_feature_2_desc || defaultConfig.dev_feature_2_desc;
+      document.getElementById('dev-feature-3-title').textContent = config.dev_feature_3_title || defaultConfig.dev_feature_3_title;
+      document.getElementById('dev-feature-3-desc').textContent = config.dev_feature_3_desc || defaultConfig.dev_feature_3_desc;
+      document.getElementById('dev-feature-4-title').textContent = config.dev_feature_4_title || defaultConfig.dev_feature_4_title;
+      document.getElementById('dev-feature-4-desc').textContent = config.dev_feature_4_desc || defaultConfig.dev_feature_4_desc;
+      document.getElementById('dev-feature-5-title').textContent = config.dev_feature_5_title || defaultConfig.dev_feature_5_title;
+      document.getElementById('dev-feature-5-desc').textContent = config.dev_feature_5_desc || defaultConfig.dev_feature_5_desc;
+      document.getElementById('dev-feature-6-title').textContent = config.dev_feature_6_title || defaultConfig.dev_feature_6_title;
+      document.getElementById('dev-feature-6-desc').textContent = config.dev_feature_6_desc || defaultConfig.dev_feature_6_desc;
+      document.getElementById('dev-feature-7-title').textContent = config.dev_feature_7_title || defaultConfig.dev_feature_7_title;
+      document.getElementById('dev-feature-7-desc').textContent = config.dev_feature_7_desc || defaultConfig.dev_feature_7_desc;
+      document.getElementById('dev-feature-8-title').textContent = config.dev_feature_8_title || defaultConfig.dev_feature_8_title;
+      document.getElementById('dev-feature-8-desc').textContent = config.dev_feature_8_desc || defaultConfig.dev_feature_8_desc;
+
+      document.getElementById('about-developer-intro').textContent = config.about_developer_intro || defaultConfig.about_developer_intro;
+
+      document.getElementById('feature1-title').textContent = config.feature_one || defaultConfig.feature_one;
+      document.getElementById('feature2-title').textContent = config.feature_two || defaultConfig.feature_two;
+      document.getElementById('feature3-title').textContent = config.feature_three || defaultConfig.feature_three;
+
+      document.getElementById('highlight1').textContent = config.highlight_one || defaultConfig.highlight_one;
+      document.getElementById('highlight2').textContent = config.highlight_two || defaultConfig.highlight_two;
+
+      document.getElementById('footer-project').textContent = config.project_name || defaultConfig.project_name;
+      document.getElementById('footer-contact').textContent = config.contact_info || defaultConfig.contact_info;
+    }
+
+    // Property modal handlers
+    let apartmentImageIndex = 0;
+    const apartmentImages = [
+      { url: 'https://kslriveriagarden.com/riverhaus.jpeg', label: 'Image 1' },
+      { url: 'https://kslriveriagarden.com/s-a.jpeg', label: 'Image 2' }
+    ];
+
+    let terraceImageIndex = 0;
+    const terraceImages = [
+      { url: 'https://kslriveriagarden.com/Double%20Storey%20Terrace%20House%20main.jpeg', label: 'Image 1' },
+      { url: 'https://kslriveriagarden.com/terrace.png', label: 'Terrace View' }
+    ];
+
+    let clusterImageIndex = 0;
+    let modalClusterImageIndex = 0;
+    const clusterImages = [
+      { url: 'https://kslriveriagarden.com/Double%20Storey%20Cluster%20House%20main.jpeg', label: 'Image 1' },
+      { url: 'https://kslriveriagarden.com/cluster.png', label: 'Cluster View' }
+    ];
+
+    function updateTerraceCardImage(imageIndex) {
+      terraceImageIndex = imageIndex;
+      const terraceImg = document.getElementById('terrace-image');
+      terraceImg.src = terraceImages[terraceImageIndex].url;
+      
+      // Update dot indicators
+      document.querySelectorAll('.terrace-dot').forEach((dot, idx) => {
+        if (idx === terraceImageIndex) {
+          dot.classList.add('active-dot');
+          dot.style.opacity = '1';
+        } else {
+          dot.classList.remove('active-dot');
+          dot.style.opacity = '0.5';
+        }
+      });
+    }
+
+    function updateClusterCardImage(imageIndex) {
+      clusterImageIndex = imageIndex;
+      const clusterImg = document.getElementById('cluster-image');
+      clusterImg.src = clusterImages[clusterImageIndex].url;
+      
+      // Update dot indicators
+      document.querySelectorAll('.cluster-dot').forEach((dot, idx) => {
+        if (idx === clusterImageIndex) {
+          dot.classList.add('active-dot');
+          dot.style.opacity = '1';
+        } else {
+          dot.classList.remove('active-dot');
+          dot.style.opacity = '0.5';
+        }
+      });
+    }
+
+    function updateApartmentCardImage(imageIndex) {
+      apartmentImageIndex = imageIndex;
+      const aptImg = document.getElementById('apt-image');
+      aptImg.src = apartmentImages[apartmentImageIndex].url;
+      
+      // Update dot indicators
+      document.querySelectorAll('.apt-dot').forEach((dot, idx) => {
+        if (idx === apartmentImageIndex) {
+          dot.classList.add('active-dot');
+          dot.style.opacity = '1';
+        } else {
+          dot.classList.remove('active-dot');
+          dot.style.opacity = '0.5';
+        }
+      });
+    }
+
+    // Apartment card dot click listeners
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.apt-dot').forEach((dot, idx) => {
+        dot.addEventListener('click', (e) => {
+          e.stopPropagation();
+          updateApartmentCardImage(idx);
+        });
+      });
+
+      // Apartment card arrow buttons
+      const aptPrevBtn = document.getElementById('apt-prev-btn');
+      const aptNextBtn = document.getElementById('apt-next-btn');
+
+      if (aptPrevBtn) {
+        aptPrevBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          updateApartmentCardImage((apartmentImageIndex - 1 + 2) % 2);
+        });
+      }
+
+      if (aptNextBtn) {
+        aptNextBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          updateApartmentCardImage((apartmentImageIndex + 1) % 2);
+        });
+      }
+
+      // Terrace card dot click listeners
+      document.querySelectorAll('.terrace-dot').forEach((dot, idx) => {
+        dot.addEventListener('click', (e) => {
+          e.stopPropagation();
+          updateTerraceCardImage(idx);
+        });
+      });
+
+      // Terrace card arrow buttons
+      const terracePrevBtn = document.getElementById('terrace-prev-btn');
+      const terraceNextBtn = document.getElementById('terrace-next-btn');
+
+      if (terracePrevBtn) {
+        terracePrevBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          updateTerraceCardImage((terraceImageIndex - 1 + 2) % 2);
+        });
+      }
+
+      if (terraceNextBtn) {
+        terraceNextBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          updateTerraceCardImage((terraceImageIndex + 1) % 2);
+        });
+      }
+
+      // Cluster card dot click listeners
+      document.querySelectorAll('.cluster-dot').forEach((dot, idx) => {
+        dot.addEventListener('click', (e) => {
+          e.stopPropagation();
+          updateClusterCardImage(idx);
+        });
+      });
+
+      // Cluster card arrow buttons
+      const clusterPrevBtn = document.getElementById('cluster-prev-btn');
+      const clusterNextBtn = document.getElementById('cluster-next-btn');
+
+      if (clusterPrevBtn) {
+        clusterPrevBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          updateClusterCardImage((clusterImageIndex - 1 + 2) % 2);
+        });
+      }
+
+      if (clusterNextBtn) {
+        clusterNextBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          updateClusterCardImage((clusterImageIndex + 1) % 2);
+        });
+      }
+    });
+
+    const propertyData = {
+      apartment: {
+        title: 'Service Apartment (Riverhaus)',
+        specs: 'Multiple unit types available:\n\n• Studio (Type A): 501 sq.ft. - From RM 312,000\n• 2 Bedrooms (Type B): 649 sq.ft. - From RM 385,000\n• 3 Bedrooms (Type C): 749 sq.ft. - From RM 446,800\n• Duplex (Type F): 809 sq.ft. - From RM 567,000\n\nFreehold & Strata Title\nLowest entry price in Iskandar Puteri region',
+        price: 'From RM 312,000',
+        floorplan: config.apartment_floorplan || defaultConfig.apartment_floorplan || '',
+        features: '✓ High ceilings\n✓ Various view options (City, Pool, Garden, River, Green Mangrove)\n✓ Fully furnished options available\n✓ Modern amenities'
+      },
+      terrace: {
+        title: 'Double Storey Terrace House (Aluna Series)',
+        specs: 'Layout: 4 Bedrooms + 4 Bathrooms\nBuild-up: 2,219 sq.ft.\nLand Size: 20\' × 70\'\nFacing: North or South\nFreehold & Individual Title\n\nPricing:\n• Facing North: From RM 1,009,800\n• Facing South: From RM 1,031,800',
+        price: 'From RM 1,009,800',
+        floorplan: 'https://kslriveriagarden.com/terrace-layout.png',
+        features: '✓ All bedrooms with en-suite bathrooms\n✓ High ceilings and spacious layouts\n✓ Open-plan living areas\n✓ Multi-generational design\n✓ Individual land titles',
+        images: [
+          'https://kslriveriagarden.com/Double%20Storey%20Terrace%20House%20main.jpeg',
+          'https://kslriveriagarden.com/terrace.png'
+        ]
+      },
+      cluster: {
+        title: 'Double Storey Cluster House (Elora Series)',
+        specs: 'Layout: 4 Bedrooms + 4 Bathrooms\nBuild-up: 2,592 sq.ft.\nLand Size: 32\' × 70\'\nFacing: North or South\nFreehold & Individual Title\n\nPricing:\n• Facing North: From RM 1,448,800\n• Facing South: From RM 1,470,800',
+        price: 'From RM 1,448,800',
+        floorplan: 'https://kslriveriagarden.com/clusterlayout.png',
+        isImage: true,
+        features: '✓ Premium semi-detached design\n✓ 10-12ft side garden space\n✓ Extra space for landscaping or extensions\n✓ Individual titles and freehold\n✓ Modern architectural design',
+        images: [
+          'https://kslriveriagarden.com/Double%20Storey%20Cluster%20House%20main.jpeg',
+          'https://kslriveriagarden.com/cluster.png'
+        ]
+      },
+      semidetached: {
+        title: 'Double Storey Semi-Detached House (Elora Series)',
+        specs: 'Layout: 4+1 Bedrooms + 4 Bathrooms\nBuild-up: 2,470 sq.ft.\nLand Size: 32\' × 80\'\nFacing: North\nFreehold & Individual Title',
+        price: 'From RM 1,763,800',
+        floorplan: 'https://kslriveriagarden.com/semiD-layout.png',
+        features: '✓ Modern design excellence\n✓ Extra study/bonus room\n✓ Premium finishings and fittings\n✓ Individual titles and freehold\n✓ Perfect for discerning homeowners'
+      },
+      shopoffice: {
+        title: '2.5 Storey Shoplots (Riverpoint - Phase 2)',
+        specs: 'Type: 2.5-Storey Commercial Retail\nBuild-up: From 4,013 sq.ft.\nFreehold & Strata Title',
+        price: 'From RM 2,700,000',
+        hasPhase1Alert: true,
+        hasFloorplan: false,
+        hideFloorplan: true,
+        features: '✓ Strategic township location\n✓ Near main entrance\n✓ Adjacent to Community Clubhouse\n✓ High foot traffic area\n✓ Excellent for retail/F&B businesses',
+        businessOpportunities: [
+          { icon: 'shopping-bag', title: 'Retail Stores', desc: 'Perfect for fashion boutiques, convenience stores, specialty shops, and lifestyle retail.' },
+          { icon: 'utensils', title: 'F&B Outlets', desc: 'Ideal for cafes, restaurants, food courts, and beverage shops serving the community.' },
+          { icon: 'briefcase', title: 'Professional Services', desc: 'Suitable for clinics, pharmacies, salons, banks, and professional offices.' },
+          { icon: 'heart', title: 'Wellness Centers', desc: 'Great for fitness studios, spas, wellness clinics, and health-related businesses.' }
+        ]
+      }
+    };
+
+    function openPropertyModal(propertyType) {
+      const property = propertyData[propertyType];
+      if (!property) return;
+
+      const modal = document.getElementById('property-modal');
+      if (!modal) return;
+
+      document.getElementById('modal-property-title').textContent = property.title;
+      document.getElementById('modal-property-type').textContent = property.title;
+      document.getElementById('modal-property-specs').innerHTML = property.specs.replace(/\n/g, '<br>');
+      document.getElementById('modal-property-price').textContent = property.price;
+      
+      // Add Phase 1 SOLD OUT alert for shopoffice
+      const specContainer = document.getElementById('modal-property-specs');
+      let existingAlert = specContainer.querySelector('.phase1-alert');
+      if (property.hasPhase1Alert) {
+        if (!existingAlert) {
+          const alert = document.createElement('div');
+          alert.className = 'phase1-alert';
+          alert.innerHTML = '<br><br><span style="font-weight: bold; color: #ef4444; font-size: 16px;">⚠️ Phase 1: SOLD OUT</span>';
+          specContainer.appendChild(alert);
+        }
+      } else {
+        if (existingAlert) existingAlert.remove();
+      }
+      
+      // Set modal image based on property type
+      const modalPropertyImage = document.getElementById('modal-property-image');
+      
+      // Reset image indices and clear previous navigation elements
+      const parentElement = modalPropertyImage.parentElement;
+      const existingArrows = parentElement.querySelector('.modal-image-arrows');
+      const existingDots = parentElement.querySelector('.modal-image-dots');
+      if (existingArrows) existingArrows.remove();
+      if (existingDots) existingDots.remove();
+      
+      if (propertyType === 'apartment') {
+        modalPropertyImage.src = storedPhotos.apartment[0] || config.apartment_image || defaultConfig.apartment_image;
+        apartmentImageIndex = 0;
+        terraceImageIndex = 0;
+        modalShopofficeImageIndex = -1; // Reset shopoffice index
+      } else if (propertyType === 'terrace') {
+        modalPropertyImage.src = terraceImages[0].url;
+        apartmentImageIndex = -1; // Reset apartment index
+        terraceImageIndex = 0;
+        modalShopofficeImageIndex = -1; // Reset shopoffice index
+      } else if (propertyType === 'cluster') {
+        modalPropertyImage.src = clusterImages[0].url;
+        apartmentImageIndex = -1; // Reset apartment index
+        terraceImageIndex = -1; // Reset terrace index
+        clusterImageIndex = 0;
+        modalShopofficeImageIndex = -1; // Reset shopoffice index
+      } else if (propertyType === 'semidetached') {
+        modalPropertyImage.src = storedPhotos.semidetached[0] || config.semidetached_image || defaultConfig.semidetached_image;
+        apartmentImageIndex = -1; // Reset apartment index
+        terraceImageIndex = -1; // Reset terrace index
+        modalShopofficeImageIndex = -1; // Reset shopoffice index
+      } else if (propertyType === 'shopoffice') {
+        modalPropertyImage.src = storedPhotos.shopoffice[0] || config.shopoffice_image || defaultConfig.shopoffice_image;
+        apartmentImageIndex = -1; // Reset apartment index
+        terraceImageIndex = -1; // Reset terrace index
+        modalShopofficeImageIndex = 0;
+      }
+
+      // Remove any existing toggle buttons
+      const modalImageContainer = document.getElementById('modal-property-image').parentElement;
+      const existingToggle = modalImageContainer.querySelector('.modal-image-toggle');
+      if (existingToggle) {
+        existingToggle.remove();
+      }
+
+      // Show floor plan only for apartment, terrace, cluster and semidetached (NOT for shopoffice)
+      const floorplanEl = document.getElementById('modal-floorplan');
+      const floorplanSection = document.getElementById('modal-floorplan-section');
+      if ((propertyType === 'apartment' || propertyType === 'terrace' || propertyType === 'cluster' || propertyType === 'semidetached') && floorplanEl) {
+        floorplanEl.src = property.floorplan;
+        floorplanSection.style.display = 'block';
+      } else if (floorplanSection && property.hideFloorplan) {
+        floorplanSection.style.display = 'none';
+      }
+
+      // Add key features section
+      const featuresContainer = document.getElementById('modal-features-container');
+      if (featuresContainer && property.features) {
+        const featureHtml = `
+          <div>
+            <h3 class="text-lg font-bold text-gray-900 mb-2">Key Features</h3>
+            <p style="white-space: pre-line; line-height: 1.8;" class="text-gray-600">${property.features}</p>
+          </div>
+        `;
+        if (!featuresContainer.querySelector('.modal-features')) {
+          const div = document.createElement('div');
+          div.className = 'modal-features';
+          div.innerHTML = featureHtml;
+          featuresContainer.appendChild(div);
+        } else {
+          featuresContainer.querySelector('.modal-features').innerHTML = featureHtml;
+        }
+      }
+
+      // Add business opportunities section for shopoffice only
+      let oppContainer = featuresContainer.querySelector('.modal-opportunities');
+      if (propertyType === 'shopoffice' && property.businessOpportunities) {
+        if (!oppContainer) {
+          oppContainer = document.createElement('div');
+          oppContainer.className = 'modal-opportunities';
+          featuresContainer.appendChild(oppContainer);
+        }
+        
+        const opportunitiesHtml = `
+          <div style="margin-top: 24px;">
+            <h3 class="text-lg font-bold text-gray-900 mb-4">Business Opportunities</h3>
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+              ${property.businessOpportunities.map(opp => `
+                <div style="display: flex; gap: 12px; align-items: flex-start;">
+                  <div style="flex-shrink: 0; padding-top: 4px;">
+                    <i data-lucide="${opp.icon}" style="width: 24px; height: 24px; color: #8b5cf6;"></i>
+                  </div>
+                  <div>
+                    <h4 style="font-weight: 600; color: #1f2937; margin-bottom: 4px;">${opp.title}</h4>
+                    <p style="font-size: 14px; color: #6b7280; line-height: 1.5;">${opp.desc}</p>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+        oppContainer.innerHTML = opportunitiesHtml;
+        lucide.createIcons();
+      } else if (oppContainer) {
+        // Remove opportunities section if it exists but property type is not shopoffice
+        oppContainer.remove();
+      }
+
+      const whatsappNumber = '60177288652';
+      const cleanNumber = whatsappNumber.replace(/\D/g, '');
+      const finalNumber = cleanNumber.startsWith('60') ? cleanNumber : '60' + cleanNumber.replace(/^0/, '');
+      const whatsappMessage = `Hi, I'm interested in the ${property.title} at Riveria Garden. Can you provide more details?`;
+      const encodedMessage = encodeURIComponent(whatsappMessage);
+      const whatsappUrl = `https://wa.me/${finalNumber}?text=${encodedMessage}`;
+      document.getElementById('modal-whatsapp-btn').href = whatsappUrl;
+
+      modal.style.display = 'flex';
+    }
+
+    document.getElementById('apt-card').addEventListener('click', () => openPropertyModal('apartment'));
+    document.getElementById('terrace-card').addEventListener('click', () => openPropertyModal('terrace'));
+    document.getElementById('cluster-card').addEventListener('click', () => openPropertyModal('cluster'));
+    document.getElementById('semidetached-card').addEventListener('click', () => openPropertyModal('semidetached'));
+    document.getElementById('shopoffice-card').addEventListener('click', () => openPropertyModal('shopoffice'));
+
+    document.getElementById('close-property-modal').addEventListener('click', () => {
+      document.getElementById('property-modal').style.display = 'none';
+    });
+
+    document.getElementById('property-modal').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('property-modal')) {
+        document.getElementById('property-modal').style.display = 'none';
+      }
+    });
+
+    // Floor Plan Modal Zoom Functionality
+    let floorplanZoom = 1;
+    const floorplanImg = document.getElementById('floorplan-enlarged');
+    const floorplanModal = document.getElementById('floorplan-modal');
+    const modalFloorplan = document.getElementById('modal-floorplan');
+
+    // Masterplan Image Modal Zoom Functionality
+    let masterplanImageZoom = 1;
+    const masterplanImageEnlarged = document.getElementById('masterplan-image-enlarged');
+    const masterplanImageModal = document.getElementById('masterplan-image-modal');
+    const masterplanImage2 = document.getElementById('masterplan-image-2');
+
+    // Open masterplan image modal when clicking the image
+    if (masterplanImage2) {
+      masterplanImage2.addEventListener('click', () => {
+        if (masterplanImage2.src && masterplanImage2.src !== '') {
+          masterplanImageEnlarged.src = masterplanImage2.src;
+          masterplanImageZoom = 1;
+          updateMasterplanImageZoom();
+          masterplanImageModal.style.display = 'flex';
+        }
+      });
+      masterplanImage2.style.cursor = 'pointer';
+    }
+
+    // Close masterplan image modal
+    document.getElementById('close-masterplan-image-modal').addEventListener('click', () => {
+      masterplanImageModal.style.display = 'none';
+    });
+
+    masterplanImageModal.addEventListener('click', (e) => {
+      if (e.target === masterplanImageModal) {
+        masterplanImageModal.style.display = 'none';
+      }
+    });
+
+    // Masterplan image zoom in button
+    document.getElementById('masterplan-zoom-in-btn').addEventListener('click', () => {
+      if (masterplanImageZoom < 3) {
+        masterplanImageZoom += 0.2;
+        updateMasterplanImageZoom();
+      }
+    });
+
+    // Masterplan image zoom out button
+    document.getElementById('masterplan-zoom-out-btn').addEventListener('click', () => {
+      if (masterplanImageZoom > 0.8) {
+        masterplanImageZoom -= 0.2;
+        updateMasterplanImageZoom();
+      }
+    });
+
+    function updateMasterplanImageZoom() {
+      masterplanImageEnlarged.style.transform = `scale(${masterplanImageZoom})`;
+      masterplanImageEnlarged.style.transformOrigin = 'center center';
+    }
+
+    // Double click to reset zoom
+    if (masterplanImageEnlarged) {
+      masterplanImageEnlarged.addEventListener('dblclick', () => {
+        masterplanImageZoom = 1;
+        updateMasterplanImageZoom();
+      });
+    }
+
+    // Location Image Modal Zoom Functionality
+    let locationImageZoom = 1;
+    const locationImageEnlarged = document.getElementById('location-image-enlarged');
+    const locationImageModal = document.getElementById('location-image-modal');
+    const locationImageElement = document.getElementById('location-image');
+
+    // Map Image Modal Zoom Functionality
+    let mapImageZoom = 1;
+    const mapImageEnlarged = document.getElementById('map-image-enlarged');
+    const mapImageModal = document.getElementById('map-image-modal');
+    const mapImageElement = document.getElementById('map-image');
+
+    // Open map image modal when clicking the image
+    if (mapImageElement) {
+      mapImageElement.addEventListener('click', () => {
+        if (mapImageElement.src && mapImageElement.src !== '') {
+          mapImageEnlarged.src = mapImageElement.src;
+          mapImageZoom = 1;
+          updateMapImageZoom();
+          mapImageModal.style.display = 'flex';
+        }
+      });
+    }
+
+    // Close map image modal
+    if (document.getElementById('close-map-image-modal')) {
+      document.getElementById('close-map-image-modal').addEventListener('click', () => {
+        mapImageModal.style.display = 'none';
+      });
+    }
+
+    if (mapImageModal) {
+      mapImageModal.addEventListener('click', (e) => {
+        if (e.target === mapImageModal) {
+          mapImageModal.style.display = 'none';
+        }
+      });
+    }
+
+    // Map image zoom in button
+    if (document.getElementById('map-zoom-in-btn')) {
+      document.getElementById('map-zoom-in-btn').addEventListener('click', () => {
+        if (mapImageZoom < 3) {
+          mapImageZoom += 0.2;
+          updateMapImageZoom();
+        }
+      });
+    }
+
+    // Map image zoom out button
+    if (document.getElementById('map-zoom-out-btn')) {
+      document.getElementById('map-zoom-out-btn').addEventListener('click', () => {
+        if (mapImageZoom > 0.8) {
+          mapImageZoom -= 0.2;
+          updateMapImageZoom();
+        }
+      });
+    }
+
+    function updateMapImageZoom() {
+      mapImageEnlarged.style.transform = `scale(${mapImageZoom})`;
+      mapImageEnlarged.style.transformOrigin = 'center center';
+    }
+
+    // Double click to reset zoom
+    if (mapImageEnlarged) {
+      mapImageEnlarged.addEventListener('dblclick', () => {
+        mapImageZoom = 1;
+        updateMapImageZoom();
+      });
+    }
+
+    // Open location image modal when clicking the image
+    if (locationImageElement) {
+      locationImageElement.addEventListener('click', () => {
+        if (locationImageElement.src && locationImageElement.src !== '') {
+          locationImageEnlarged.src = locationImageElement.src;
+          locationImageZoom = 1;
+          updateLocationImageZoom();
+          locationImageModal.style.display = 'flex';
+        }
+      });
+    }
+
+    // Close location image modal
+    document.getElementById('close-location-image-modal').addEventListener('click', () => {
+      locationImageModal.style.display = 'none';
+    });
+
+    locationImageModal.addEventListener('click', (e) => {
+      if (e.target === locationImageModal) {
+        locationImageModal.style.display = 'none';
+      }
+    });
+
+    // Location Map Modal Zoom Functionality
+    let locationMapZoom = 1;
+    const locationMapEnlarged = document.getElementById('location-map-enlarged');
+    const locationMapModal = document.getElementById('location-map-modal');
+
+    // Close location map modal
+    if (document.getElementById('close-location-map-modal')) {
+      document.getElementById('close-location-map-modal').addEventListener('click', () => {
+        locationMapModal.style.display = 'none';
+      });
+    }
+
+    if (locationMapModal) {
+      locationMapModal.addEventListener('click', (e) => {
+        if (e.target === locationMapModal) {
+          locationMapModal.style.display = 'none';
+        }
+      });
+    }
+
+    // Location map zoom in button
+    if (document.getElementById('location-map-zoom-in-btn')) {
+      document.getElementById('location-map-zoom-in-btn').addEventListener('click', () => {
+        if (locationMapZoom < 3) {
+          locationMapZoom += 0.2;
+          updateLocationMapZoom();
+        }
+      });
+    }
+
+    // Location map zoom out button
+    if (document.getElementById('location-map-zoom-out-btn')) {
+      document.getElementById('location-map-zoom-out-btn').addEventListener('click', () => {
+        if (locationMapZoom > 0.8) {
+          locationMapZoom -= 0.2;
+          updateLocationMapZoom();
+        }
+      });
+    }
+
+    function updateLocationMapZoom() {
+      locationMapEnlarged.style.transform = `scale(${locationMapZoom})`;
+      locationMapEnlarged.style.transformOrigin = 'center center';
+    }
+
+    // Double click to reset zoom
+    if (locationMapEnlarged) {
+      locationMapEnlarged.addEventListener('dblclick', () => {
+        locationMapZoom = 1;
+        updateLocationMapZoom();
+      });
+    }
+
+    // Explore Location button - Open location map modal
+    document.getElementById('explore-location-btn').addEventListener('click', () => {
+      const locationMapImg = document.getElementById('location-map-enlarged');
+      if (locationMapImg) {
+        locationMapImg.src = 'https://kslriveriagarden.com/map.jpeg';
+        locationMapZoom = 1;
+        updateLocationMapZoom();
+        locationMapModal.style.display = 'flex';
+      }
+    });
+
+    // Location image zoom in button
+    document.getElementById('location-zoom-in-btn').addEventListener('click', () => {
+      if (locationImageZoom < 3) {
+        locationImageZoom += 0.2;
+        updateLocationImageZoom();
+      }
+    });
+
+    // Location image zoom out button
+    document.getElementById('location-zoom-out-btn').addEventListener('click', () => {
+      if (locationImageZoom > 0.8) {
+        locationImageZoom -= 0.2;
+        updateLocationImageZoom();
+      }
+    });
+
+    function updateLocationImageZoom() {
+      locationImageEnlarged.style.transform = `scale(${locationImageZoom})`;
+      locationImageEnlarged.style.transformOrigin = 'center center';
+    }
+
+    // Double click to reset zoom
+    if (locationImageEnlarged) {
+      locationImageEnlarged.addEventListener('dblclick', () => {
+        locationImageZoom = 1;
+        updateLocationImageZoom();
+      });
+    }
+
+    // Shop office image toggle functionality
+    let shopofficeImageIndex = 0;
+    const shopofficeImages = [
+      { url: 'https://kslriveriagarden.com/shop4.jpeg', label: 'View 1' },
+      { url: 'https://kslriveriagarden.com/shop5.jpeg', label: 'View 2' }
+    ];
+
+    function updateShopofficeImage(imageIndex) {
+      shopofficeImageIndex = imageIndex;
+      const shopofficeImg = document.getElementById('shopoffice-image');
+      shopofficeImg.src = shopofficeImages[shopofficeImageIndex].url;
+      
+      // Update dot indicators
+      document.querySelectorAll('.shopoffice-dot').forEach((dot, idx) => {
+        if (idx === shopofficeImageIndex) {
+          dot.classList.add('active-dot');
+          dot.style.opacity = '1';
+        } else {
+          dot.classList.remove('active-dot');
+          dot.style.opacity = '0.5';
+        }
+      });
+
+      // Update View 1 and View 2 button styles
+      const view1Btn = document.getElementById('shopoffice-view-1');
+      const view2Btn = document.getElementById('shopoffice-view-2');
+      if (view1Btn && view2Btn) {
+        if (shopofficeImageIndex === 0) {
+          view1Btn.className = 'text-xs font-semibold text-purple-600 hover:text-purple-700 transition';
+          view2Btn.className = 'text-xs font-semibold text-gray-400 hover:text-gray-500 transition';
+        } else {
+          view1Btn.className = 'text-xs font-semibold text-gray-400 hover:text-gray-500 transition';
+          view2Btn.className = 'text-xs font-semibold text-purple-600 hover:text-purple-700 transition';
+        }
+      }
+      
+      // Update modal toggle button if modal is open and showing shopoffice
+      const modalToggle = document.querySelector('.modal-image-toggle');
+      if (modalToggle && document.getElementById('property-modal').style.display === 'flex') {
+        modalShopofficeImageIndex = shopofficeImageIndex;
+        document.getElementById('modal-property-image').src = shopofficeImages[shopofficeImageIndex].url;
+        modalToggle.textContent = shopofficeImages[shopofficeImageIndex].label;
+      }
+    }
+
+    // Dot click event listeners
+    document.querySelectorAll('.shopoffice-dot').forEach((dot, idx) => {
+      dot.addEventListener('click', (e) => {
+        e.stopPropagation();
+        updateShopofficeImage(idx);
+      });
+    });
+
+    // Arrow button click listeners for shopoffice card
+    document.addEventListener('DOMContentLoaded', () => {
+      const shopoffcePrevBtn = document.getElementById('shopoffice-prev-btn');
+      const shopofficeNextBtn = document.getElementById('shopoffice-next-btn');
+
+      if (shopoffcePrevBtn) {
+        shopoffcePrevBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          updateShopofficeImage((shopofficeImageIndex - 1 + 2) % 2);
+        });
+      }
+
+      if (shopofficeNextBtn) {
+        shopofficeNextBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          updateShopofficeImage((shopofficeImageIndex + 1) % 2);
+        });
+      }
+    });
+
+    // View 1 and View 2 button click listeners
+    document.addEventListener('DOMContentLoaded', () => {
+      const view1Btn = document.getElementById('shopoffice-view-1');
+      const view2Btn = document.getElementById('shopoffice-view-2');
+      
+      if (view1Btn) {
+        view1Btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          updateShopofficeImage(0);
+        });
+      }
+      
+      if (view2Btn) {
+        view2Btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          updateShopofficeImage(1);
+        });
+      }
+    });
+
+    // Store current shopoffice image index for modal
+    let modalShopofficeImageIndex = 0;
+
+    // Add dot indicators and arrow navigation to modal property image for shopoffice only
+    const modalPropertyImage = document.getElementById('modal-property-image');
+    if (modalPropertyImage) {
+      modalPropertyImage.addEventListener('load', () => {
+        const modalTitle = document.getElementById('modal-property-title').textContent;
+        // Add dots and arrows for shopoffice, apartment, terrace, and cluster (which have multiple images)
+        if ((modalTitle.includes('Shoplots') || modalTitle.includes('Service Apartment') || modalTitle.includes('Terrace') || modalTitle.includes('Cluster')) && modalPropertyImage.parentElement) {
+          let existingDots = modalPropertyImage.parentElement.querySelector('.modal-image-dots');
+          let existingArrows = modalPropertyImage.parentElement.querySelector('.modal-image-arrows');
+          if (!existingDots && !existingArrows) {
+            // Determine number of images based on property type
+            const numImages = 2;
+            
+            // Create arrow navigation buttons
+            const arrowsContainer = document.createElement('div');
+            arrowsContainer.className = 'modal-image-arrows';
+            arrowsContainer.style.cssText = 'position: absolute; inset: 0; display: flex; align-items: center; justify-content: space-between; padding: 16px; z-index: 20; pointer-events: none;';
+            
+            // Left arrow button
+            const leftArrow = document.createElement('button');
+            leftArrow.style.cssText = `
+              background-color: rgba(255, 255, 255, 0.25);
+              border: none;
+              border-radius: 50%;
+              width: 48px;
+              height: 48px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              cursor: pointer;
+              transition: all 0.3s ease;
+              pointer-events: auto;
+            `;
+            leftArrow.innerHTML = '<i data-lucide="chevron-left" style="width: 28px; height: 28px; color: black;"></i>';
+            leftArrow.addEventListener('click', (e) => {
+              e.stopPropagation();
+              if (modalTitle.includes('Service Apartment')) {
+                apartmentImageIndex = (apartmentImageIndex - 1 + 2) % 2;
+                document.getElementById('modal-property-image').src = apartmentImages[apartmentImageIndex].url;
+                updateModalApartmentIndicators();
+              } else if (modalTitle.includes('Terrace')) {
+                terraceImageIndex = (terraceImageIndex - 1 + 2) % 2;
+                document.getElementById('modal-property-image').src = terraceImages[terraceImageIndex].url;
+                updateModalTerraceIndicators();
+              } else if (modalTitle.includes('Cluster')) {
+                clusterImageIndex = (clusterImageIndex - 1 + 2) % 2;
+                document.getElementById('modal-property-image').src = clusterImages[clusterImageIndex].url;
+                updateModalClusterIndicators();
+              } else if (modalTitle.includes('Shoplots')) {
+                modalShopofficeImageIndex = (modalShopofficeImageIndex - 1 + 2) % 2;
+                document.getElementById('modal-property-image').src = shopofficeImages[modalShopofficeImageIndex].url;
+                updateModalShopofficeIndicators();
+              }
+            });
+            
+            // Right arrow button
+            const rightArrow = document.createElement('button');
+            rightArrow.style.cssText = `
+              background-color: rgba(255, 255, 255, 0.25);
+              border: none;
+              border-radius: 50%;
+              width: 48px;
+              height: 48px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              cursor: pointer;
+              transition: all 0.3s ease;
+              pointer-events: auto;
+            `;
+            rightArrow.innerHTML = '<i data-lucide="chevron-right" style="width: 28px; height: 28px; color: black;"></i>';
+            rightArrow.addEventListener('click', (e) => {
+              e.stopPropagation();
+              if (modalTitle.includes('Service Apartment')) {
+                apartmentImageIndex = (apartmentImageIndex + 1) % 2;
+                document.getElementById('modal-property-image').src = apartmentImages[apartmentImageIndex].url;
+                updateModalApartmentIndicators();
+              } else if (modalTitle.includes('Terrace')) {
+                terraceImageIndex = (terraceImageIndex + 1) % 2;
+                document.getElementById('modal-property-image').src = terraceImages[terraceImageIndex].url;
+                updateModalTerraceIndicators();
+              } else if (modalTitle.includes('Cluster')) {
+                clusterImageIndex = (clusterImageIndex + 1) % 2;
+                document.getElementById('modal-property-image').src = clusterImages[clusterImageIndex].url;
+                updateModalClusterIndicators();
+              } else if (modalTitle.includes('Shoplots')) {
+                modalShopofficeImageIndex = (modalShopofficeImageIndex + 1) % 2;
+                document.getElementById('modal-property-image').src = shopofficeImages[modalShopofficeImageIndex].url;
+                updateModalShopofficeIndicators();
+              }
+            });
+            
+            arrowsContainer.appendChild(leftArrow);
+            arrowsContainer.appendChild(rightArrow);
+            
+            // Create dots container
+            const dotsContainer = document.createElement('div');
+            dotsContainer.className = 'modal-image-dots';
+            dotsContainer.style.cssText = 'position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; z-index: 10;';
+            
+            // Create dots based on number of images
+            for (let i = 0; i < numImages; i++) {
+              const dot = document.createElement('button');
+              dot.className = 'modal-image-dot';
+              dot.style.cssText = `
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background-color: white;
+                border: none;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                opacity: ${i === 0 ? '1' : '0.5'};
+              `;
+              
+              dot.addEventListener('mouseover', () => {
+                dot.style.transform = 'scale(1.2)';
+              });
+              dot.addEventListener('mouseout', () => {
+                dot.style.transform = 'scale(1)';
+              });
+              
+              dot.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (modalTitle.includes('Service Apartment')) {
+                  apartmentImageIndex = i;
+                  document.getElementById('modal-property-image').src = apartmentImages[i].url;
+                  updateModalApartmentIndicators();
+                } else if (modalTitle.includes('Terrace')) {
+                  terraceImageIndex = i;
+                  document.getElementById('modal-property-image').src = terraceImages[i].url;
+                  updateModalTerraceIndicators();
+                } else if (modalTitle.includes('Cluster')) {
+                  clusterImageIndex = i;
+                  document.getElementById('modal-property-image').src = clusterImages[i].url;
+                  updateModalClusterIndicators();
+                } else if (modalTitle.includes('Shoplots')) {
+                  modalShopofficeImageIndex = i;
+                  document.getElementById('modal-property-image').src = shopofficeImages[i].url;
+                  updateModalShopofficeIndicators();
+                }
+              });
+              
+              dotsContainer.appendChild(dot);
+            }
+            
+            modalPropertyImage.parentElement.style.position = 'relative';
+            modalPropertyImage.parentElement.appendChild(arrowsContainer);
+            modalPropertyImage.parentElement.appendChild(dotsContainer);
+          }
+        }
+      });
+    }
+
+    function updateModalApartmentIndicators() {
+      // Update all dots
+      document.querySelectorAll('.modal-image-dot').forEach((d, idx) => {
+        d.style.opacity = idx === apartmentImageIndex ? '1' : '0.5';
+      });
+    }
+
+    function updateModalTerraceIndicators() {
+      // Update all dots
+      document.querySelectorAll('.modal-image-dot').forEach((d, idx) => {
+        d.style.opacity = idx === terraceImageIndex ? '1' : '0.5';
+      });
+    }
+
+    function updateModalClusterIndicators() {
+      // Update all dots
+      document.querySelectorAll('.modal-image-dot').forEach((d, idx) => {
+        d.style.opacity = idx === clusterImageIndex ? '1' : '0.5';
+      });
+    }
+
+    function updateModalShopofficeIndicators() {
+      // Update all dots
+      document.querySelectorAll('.modal-image-dot').forEach((d, idx) => {
+        d.style.opacity = idx === modalShopofficeImageIndex ? '1' : '0.5';
+      });
+    }
+
+    // Open floor plan modal when clicking the floor plan image
+    if (modalFloorplan) {
+      modalFloorplan.addEventListener('click', () => {
+        if (modalFloorplan.src && modalFloorplan.src !== '') {
+          floorplanImg.src = modalFloorplan.src;
+          floorplanZoom = 1;
+          updateFloorplanZoom();
+          floorplanModal.style.display = 'flex';
+        }
+      });
+    }
+
+    // Close floor plan modal
+    document.getElementById('close-floorplan-modal').addEventListener('click', () => {
+      floorplanModal.style.display = 'none';
+    });
+
+    floorplanModal.addEventListener('click', (e) => {
+      if (e.target === floorplanModal) {
+        floorplanModal.style.display = 'none';
+      }
+    });
+
+    // Zoom in button
+    document.getElementById('zoom-in-btn').addEventListener('click', () => {
+      if (floorplanZoom < 3) {
+        floorplanZoom += 0.2;
+        updateFloorplanZoom();
+      }
+    });
+
+    // Zoom out button
+    document.getElementById('zoom-out-btn').addEventListener('click', () => {
+      if (floorplanZoom > 0.8) {
+        floorplanZoom -= 0.2;
+        updateFloorplanZoom();
+      }
+    });
+
+    function updateFloorplanZoom() {
+      floorplanImg.style.transform = `scale(${floorplanZoom})`;
+      floorplanImg.style.transformOrigin = 'center center';
+    }
+
+    // Double click to reset zoom
+    if (floorplanImg) {
+      floorplanImg.addEventListener('dblclick', () => {
+        floorplanZoom = 1;
+        updateFloorplanZoom();
+      });
+    }
+
+    // Slideshow event listeners
+    document.getElementById('next-btn').addEventListener('click', () => {
+      nextSlide();
+      restartSlideshow();
+    });
+    document.getElementById('prev-btn').addEventListener('click', () => {
+      prevSlide();
+      restartSlideshow();
+    });
+
+    // Explore Location button - Open location map modal
+    document.getElementById('explore-location-btn').addEventListener('click', () => {
+      const locationMapImg = document.getElementById('location-map-enlarged');
+      if (locationMapImg) {
+        locationMapImg.src = 'https://kslriveriagarden.com/map.jpeg';
+        locationMapZoom = 1;
+        updateLocationMapZoom();
+        locationMapModal.style.display = 'flex';
+      }
+    });
+
+    // Virtual Tour Modal handlers
+    const vrModal = document.getElementById('vr-modal');
+
+    document.getElementById('close-vr-modal').addEventListener('click', () => {
+      vrModal.style.display = 'none';
+    });
+
+    vrModal.addEventListener('click', (e) => {
+      if (e.target === vrModal) {
+        vrModal.style.display = 'none';
+      }
+    });
+
+    function convertGoogleDriveUrl(url) {
+      if (!url || typeof url !== 'string') return url;
+      if (url.includes('lh3.googleusercontent.com') || url.includes('imgur.com') || url.includes('via.placeholder')) {
+        return url;
+      }
+      // Already in correct format
+      if (url.includes('drive.google.com/uc?export=view')) {
+        return url;
+      }
+      let fileId = null;
+      const match1 = url.match(/[?&]id=([a-zA-Z0-9-_]+)/);
+      if (match1) {
+        fileId = match1[1];
+      }
+      const match2 = url.match(/\/d\/([a-zA-Z0-9-_]+)/);
+      if (!fileId && match2) {
+        fileId = match2[1];
+      }
+      if (fileId) {
+        return `https://drive.google.com/uc?export=view&id=${fileId}`;
+      }
+      return url;
+    }
+
+    function fixGoogleDriveUrls() {
+      const googleDriveFields = ['hero_image', 'gallery_image_1', 'gallery_image_2', 'gallery_image_3', 'location_image', 'apartment_image', 'terrace_image', 'cluster_image', 'shopoffice_image'];
+      googleDriveFields.forEach(field => {
+        if (config[field] && config[field].includes('drive.google.com')) {
+          config[field] = convertGoogleDriveUrl(config[field]);
+        }
+      });
+    }
+
+    function setupPhotoUpload() {
+      const sections = ['hero', 'apartment', 'terrace', 'cluster', 'semidetached', 'shopoffice', 'location'];
+      
+      sections.forEach(section => {
+        const fileInput = document.getElementById(`${section}-upload`);
+        if (fileInput) {
+          fileInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = async (event) => {
+              const dataUrl = event.target.result;
+              
+              // Save to database
+              const result = await window.dataSdk.create({
+                id: `${section}-${Date.now()}`,
+                section: section,
+                image_data: dataUrl,
+                uploaded_at: new Date().toISOString(),
+                property_type: section === 'apartment' ? 'Services Apartment' : 
+                              section === 'terrace' ? 'Terrace House' :
+                              section === 'cluster' ? 'Cluster Home' :
+                              section === 'semidetached' ? 'Semi-Detached Home' :
+                              section === 'shopoffice' ? 'Shop Office' : ''
+              });
+
+              if (result.isOk) {
+                // Add to local storage
+                storedPhotos[section].push(dataUrl);
+                
+                // Update UI
+                updateUI();
+                if (section === 'hero') {
+                  currentSlideIndices.hero = storedPhotos.hero.length - 1;
+                  updateSlideshow();
+                }
+              }
+              
+              e.target.value = '';
+            };
+            reader.readAsDataURL(file);
+          });
+        }
+      });
+
+      // Setup drag and drop
+      const heroDropZone = document.getElementById('hero-drop-zone');
+      if (heroDropZone) {
+        heroDropZone.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          heroDropZone.style.opacity = '0.7';
+        });
+
+        heroDropZone.addEventListener('dragleave', () => {
+          heroDropZone.style.opacity = '1';
+        });
+
+        heroDropZone.addEventListener('drop', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          heroDropZone.style.opacity = '1';
+
+          const files = e.dataTransfer.files;
+          if (files.length > 0) {
+            const file = files[0];
+            if (file.type.startsWith('image/')) {
+              const reader = new FileReader();
+              reader.onload = async (event) => {
+                const dataUrl = event.target.result;
+                
+                const result = await window.dataSdk.create({
+                  id: `hero-${Date.now()}`,
+                  section: 'hero',
+                  image_data: dataUrl,
+                  uploaded_at: new Date().toISOString(),
+                  property_type: ''
+                });
+
+                if (result.isOk) {
+                  storedPhotos.hero.push(dataUrl);
+                  currentSlideIndices.hero = storedPhotos.hero.length - 1;
+                  updateSlideshow();
+                }
+              };
+              reader.readAsDataURL(file);
+            } else {
+              alert('Please drop an image file.');
+            }
+          }
+        });
+      }
+    }
+
+    // Data SDK Handler for Photo Management
+    const photoHandler = {
+      onDataChanged(photos) {
+        // Load all photos organized by section
+        storedPhotos.hero = [];
+        storedPhotos.apartment = [];
+        storedPhotos.terrace = [];
+        storedPhotos.cluster = [];
+        storedPhotos.semidetached = [];
+        storedPhotos.shopoffice = [];
+        storedPhotos.location = [];
+
+        photos.forEach(photo => {
+          if (storedPhotos[photo.section]) {
+            storedPhotos[photo.section].push(photo.image_data);
+          }
+        });
+
+        // Update UI with loaded photos
+        updateUI();
+        updateSlideshow();
+        
+        // If we loaded photos, reset to first one
+        if (storedPhotos.hero.length > 0) {
+          currentSlideIndices.hero = 0;
+          updateSlideshow();
+        }
+      }
+    };
+
+    // Initialize Data SDK
+    async function initializePhotoSystem() {
+      const initResult = await window.dataSdk.init(photoHandler);
+      if (!initResult.isOk) {
+        console.error('Failed to initialize photo system');
+      }
+    }
+
+    window.elementSdk.init(element);
+    initializePhotoSystem();
+    setupPhotoUpload();
+    fixGoogleDriveUrls();
+    updateUI();
+    updateSlideshow();
+    startSlideshow();
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+    });
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9e98537570b6e708',t:'MTc3NTcyNTI3NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
